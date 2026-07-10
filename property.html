@@ -8,316 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --navy:#0C1F35; --navy-mid:#132840; --cream:#F8F3EB; --cream-dark:#EDE6D8;
-    --gold:#B8882E; --gold-light:#D4A94A; --white:#FFFFFF;
-    --text-mid:#4A5568; --text-light:#8A9BB0; --border:#E2D9C8;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { font-family: "DM Sans", sans-serif; background: var(--white); color: var(--navy); overflow-x: hidden; }
-  img { display: block; width: 100%; object-fit: cover; }
-  a { text-decoration: none; color: inherit; }
-  button { border: none; cursor: pointer; font-family: inherit; }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-    padding: 0 4rem; height: 80px;
-    display: flex; align-items: center; justify-content: space-between;
-    background: rgba(12,31,53,0.96); backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    transition: background 0.3s;
-  }
-  .nav-logo a { display: flex; align-items: center; gap: 1rem; }
-  .nav-logo img { height: 50px; width: auto; }
-  .nav-divider { width: 1px; height: 30px; background: rgba(255,255,255,0.18); }
-  .nav-exp img { height: 34px; width: auto; opacity: 0.85; }
-  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-  .nav-links a { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.7); transition: color 0.2s; }
-  .nav-links a:hover { color: var(--gold-light); }
-  .nav-phone a { font-size: 0.78rem; letter-spacing: 0.06em; color: rgba(255,255,255,0.6); transition: color 0.2s; }
-  .nav-phone a:hover { color: var(--gold-light); }
-
-  /* ── HERO ── */
-  .prop-hero {
-    position: relative; height: 70vh; min-height: 480px;
-    overflow: hidden; margin-top: 80px;
-  }
-  .prop-hero-img {
-    width: 100%; height: 100%; object-fit: cover;
-    transform: scale(1.04); transition: transform 8s ease;
-  }
-  .prop-hero-img.loaded { transform: scale(1); }
-  .prop-hero-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to bottom, rgba(12,31,53,0.15) 0%, rgba(12,31,53,0.65) 100%);
-  }
-  .prop-hero-content {
-    position: absolute; left: 4rem; bottom: 3rem;
-  }
-  .back-btn {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
-    color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;
-    transition: color 0.2s; cursor: pointer; background: none; border: none;
-    padding: 0; font-family: inherit;
-  }
-  .back-btn svg { width: 14px; height: 14px; flex-shrink: 0; transition: transform 0.2s; }
-  .back-btn:hover { color: var(--gold-light); }
-  .back-btn:hover svg { transform: translateX(-3px); }
-  .prop-status-badge {
-    display: inline-block;
-    font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase;
-    padding: 0.3rem 0.9rem; margin-bottom: 1rem;
-    background: var(--gold); color: var(--white);
-  }
-  .prop-hero-content h1 {
-    font-family: "Cormorant Garamond", serif;
-    font-size: clamp(2.2rem, 5vw, 3.6rem);
-    font-weight: 300; color: var(--white); line-height: 1.05;
-    margin-bottom: 0.5rem;
-  }
-  .prop-hero-area {
-    font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: rgba(255,255,255,0.6);
-  }
-  .prop-hero-area::before { content: "📍 "; font-style: normal; }
-
-  /* ── MAIN LAYOUT: GALLERY + DETAILS ── */
-  .prop-main {
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 0;
-    padding: 4rem 4rem 6rem;
-    max-width: 1400px; margin: 0 auto;
-    align-items: start;
-  }
-
-  /* ── GALLERY ── */
-  .gallery { position: sticky; top: 100px; }
-  .gallery-main {
-    position: relative; aspect-ratio: 4/3; overflow: hidden;
-    background: var(--cream);
-  }
-  .gallery-main img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: opacity 0.3s;
-  }
-  .gallery-counter {
-    position: absolute; bottom: 1rem; right: 1rem;
-    background: rgba(12,31,53,0.7); color: var(--white);
-    font-size: 0.7rem; letter-spacing: 0.1em;
-    padding: 0.3rem 0.75rem;
-  }
-  .gallery-nav {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    display: flex; justify-content: space-between;
-    width: 100%; padding: 0 1rem; pointer-events: none;
-  }
-  .gallery-arrow {
-    pointer-events: all;
-    width: 40px; height: 40px;
-    background: rgba(12,31,53,0.6); color: var(--white);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: background 0.2s; border: none;
-    font-family: inherit;
-  }
-  .gallery-arrow:hover { background: var(--gold); }
-  .gallery-arrow svg { width: 16px; height: 16px; }
-  .gallery-thumbs {
-    display: grid; grid-template-columns: repeat(6, 1fr);
-    gap: 4px; margin-top: 4px;
-  }
-  .gallery-thumb {
-    aspect-ratio: 1; overflow: hidden; cursor: pointer;
-    opacity: 0.55; transition: opacity 0.2s;
-  }
-  .gallery-thumb:hover, .gallery-thumb.active { opacity: 1; }
-  .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-  /* ── DETAILS CARD ── */
-  .details-card {
-    background: var(--cream); padding: 2.5rem 2rem;
-    margin-left: 3rem; position: sticky; top: 100px;
-  }
-  .details-price {
-    font-family: "Cormorant Garamond", serif;
-    font-size: 2.1rem; font-weight: 400; color: var(--navy);
-    margin-bottom: 0.25rem;
-  }
-  .details-delivery {
-    font-size: 0.8rem; letter-spacing: 0.08em; color: var(--gold);
-    margin-bottom: 2rem; padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--cream-dark);
-  }
-  .detail-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0.85rem 0; border-bottom: 1px solid var(--cream-dark);
-  }
-  .detail-label {
-    font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--text-light);
-  }
-  .detail-value { font-size: 0.88rem; color: var(--navy); text-align: right; }
-  .enquire-btn {
-    display: block; width: 100%;
-    background: var(--navy); color: var(--white);
-    padding: 1rem; text-align: center;
-    font-size: 0.76rem; letter-spacing: 0.14em; text-transform: uppercase;
-    margin-top: 2rem; transition: background 0.25s;
-  }
-  .enquire-btn:hover { background: var(--gold); }
-  .whatsapp-btn {
-    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-    width: 100%; border: 1px solid var(--border); color: var(--text-mid);
-    padding: 0.9rem; text-align: center;
-    font-size: 0.76rem; letter-spacing: 0.1em; text-transform: uppercase;
-    margin-top: 0.75rem; transition: border-color 0.2s, color 0.2s;
-  }
-  .whatsapp-btn:hover { border-color: var(--gold); color: var(--gold); }
-  .whatsapp-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-
-  /* ── DESCRIPTION ── */
-  .prop-description {
-    background: var(--white);
-    padding: 6rem 4rem; max-width: 1400px; margin: 0 auto;
-    border-top: 1px solid var(--border);
-  }
-  .section-label {
-    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 1rem;
-  }
-  .section-title {
-    font-family: "Cormorant Garamond", serif;
-    font-size: clamp(1.9rem, 3.5vw, 2.8rem);
-    font-weight: 300; line-height: 1.1; margin-bottom: 1.5rem;
-  }
-  .section-line {
-    width: 40px; height: 1px; background: var(--gold);
-    margin-bottom: 2rem;
-  }
-  .desc-text {
-    font-size: 0.97rem; line-height: 1.9;
-    color: var(--text-mid); max-width: 780px;
-  }
-  .desc-text p + p { margin-top: 1.25rem; }
-
-  /* ── AMENITIES ── */
-  .prop-amenities {
-    background: var(--cream);
-    padding: 6rem 4rem; max-width: 1400px; margin: 0 auto;
-  }
-  .amenities-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem; margin-top: 2.5rem;
-  }
-  .amenity-item {
-    display: flex; align-items: center; gap: 0.75rem;
-    padding: 1rem 1.25rem;
-    background: var(--white); border: 1px solid var(--border);
-    font-size: 0.85rem; color: var(--navy);
-    transition: border-color 0.2s;
-  }
-  .amenity-item:hover { border-color: var(--gold); }
-  .amenity-icon {
-    width: 8px; height: 8px; background: var(--gold);
-    flex-shrink: 0; border-radius: 50%;
-  }
-
-  /* ── CONTACT / ENQUIRE ── */
-  .prop-contact {
-    background: var(--navy);
-    padding: 6rem 4rem; max-width: 100%; width: 100%;
-  }
-  .prop-contact-inner {
-    max-width: 1400px; margin: 0 auto;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem;
-    align-items: start;
-  }
-  .prop-contact .section-label { color: var(--gold-light); }
-  .prop-contact .section-title { color: var(--white); }
-  .prop-contact .section-line { background: var(--gold); }
-  .contact-info-text { font-size: 0.92rem; color: rgba(255,255,255,0.55); line-height: 1.8; }
-  .contact-details-list { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
-  .contact-detail-item { display: flex; align-items: center; gap: 0.9rem; }
-  .contact-detail-icon { font-size: 1.1rem; }
-  .contact-detail-text { font-size: 0.85rem; color: rgba(255,255,255,0.65); }
-  .contact-detail-text strong { color: rgba(255,255,255,0.35); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 0.2rem; font-weight: 400; }
-  .form-group { margin-bottom: 1.25rem; }
-  .form-group label { display: block; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.5rem; }
-  .form-group input, .form-group textarea, .form-group select {
-    width: 100%; background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12); color: var(--white);
-    padding: 0.85rem 1rem; font-size: 0.9rem; font-family: inherit;
-    outline: none; transition: border-color 0.2s;
-    -webkit-appearance: none; appearance: none;
-  }
-  .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,0.25); }
-  .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--gold); }
-  .form-group textarea { resize: vertical; min-height: 110px; }
-  .form-group select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.4)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .btn-submit {
-    width: 100%; background: var(--gold); color: var(--white);
-    padding: 1rem; font-size: 0.78rem; letter-spacing: 0.14em;
-    text-transform: uppercase; border: none; font-family: inherit; cursor: pointer;
-    transition: background 0.25s; margin-top: 0.5rem;
-  }
-  .btn-submit:hover { background: var(--gold-light); }
-
-  /* ── FOOTER ── */
-  footer { background: #07121E; padding: 3rem 4rem 2rem; }
-  .footer-top {
-    display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr;
-    gap: 3rem; padding-bottom: 2rem;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .footer-brand img { height: 42px; width: auto; opacity: 0.9; }
-  .footer-tagline { font-size: 0.8rem; color: rgba(255,255,255,0.35); line-height: 1.75; margin-top: 1rem; max-width: 220px; }
-  .footer-col h4 { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 1.1rem; font-weight: 400; }
-  .footer-col ul { list-style: none; }
-  .footer-col li { margin-bottom: 0.65rem; }
-  .footer-col a { font-size: 0.8rem; color: rgba(255,255,255,0.45); transition: color 0.2s; }
-  .footer-col a:hover { color: var(--gold-light); }
-  .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; font-size: 0.7rem; color: rgba(255,255,255,0.22); }
-  .footer-socials { display: flex; gap: 1rem; }
-  .footer-socials a { font-size: 0.7rem; letter-spacing: 0.08em; color: rgba(255,255,255,0.3); transition: color 0.2s; }
-  .footer-socials a:hover { color: var(--gold-light); }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 1100px) {
-    .prop-main { grid-template-columns: 1fr; padding: 3rem 2.5rem 5rem; }
-    .details-card { margin-left: 0; margin-top: 2.5rem; position: static; }
-    .gallery { position: static; }
-    .gallery-thumbs { grid-template-columns: repeat(6, 1fr); }
-    .prop-description, .prop-amenities { padding: 4.5rem 2.5rem; }
-    .prop-contact { padding: 4.5rem 2.5rem; }
-    .prop-contact-inner { grid-template-columns: 1fr; gap: 3rem; }
-    footer { padding: 3rem 2.5rem 2rem; }
-    .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
-  }
-  @media (max-width: 768px) {
-    nav { padding: 0 1.5rem; }
-    .nav-links { display: none; }
-    .prop-hero-content { left: 1.5rem; bottom: 2rem; }
-    .prop-main { padding: 2.5rem 1.5rem 4rem; }
-    .gallery-thumbs { grid-template-columns: repeat(5, 1fr); }
-    .prop-description, .prop-amenities { padding: 4rem 1.5rem; }
-    .prop-contact { padding: 4rem 1.5rem; }
-    .amenities-grid { grid-template-columns: 1fr 1fr; }
-    footer { padding: 3rem 1.5rem 2rem; }
-    .footer-top { grid-template-columns: 1fr; }
-    .footer-bottom { flex-direction: column; gap: 0.75rem; text-align: center; }
-    .form-row { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 480px) {
-    .gallery-thumbs { grid-template-columns: repeat(4, 1fr); }
-    .amenities-grid { grid-template-columns: 1fr; }
-  }
-</style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-210N9KC46H"></script>
 <script>
@@ -326,37 +16,162 @@
   gtag('js', new Date());
   gtag('config', 'G-210N9KC46H');
 </script>
+<style>
+  :root {
+    --navy:#0C1F35; --navy-mid:#132840; --cream:#F8F3EB; --cream-dark:#EDE6D8;
+    --gold:#B8882E; --gold-light:#D4A94A; --white:#FFFFFF;
+    --text-mid:#4A5568; --text-light:#8A9BB0; --border:#E2D9C8;
+  }
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { font-family:"DM Sans",sans-serif; background:var(--white); color:var(--navy); overflow-x:hidden; }
+  img { display:block; width:100%; object-fit:cover; }
+  a { text-decoration:none; color:inherit; }
+  button { border:none; cursor:pointer; font-family:inherit; }
+  nav { position:fixed; top:0; left:0; right:0; z-index:200; padding:0 4rem; height:80px;
+    display:flex; align-items:center; justify-content:space-between;
+    background:rgba(12,31,53,0.96); backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(255,255,255,0.06); }
+  .nav-logo a { display:flex; align-items:center; gap:1rem; }
+  .nav-logo img { height:50px; width:auto; }
+  .nav-divider { width:1px; height:30px; background:rgba(255,255,255,0.18); flex-shrink:0; }
+  .nav-exp img { height:34px; width:auto; opacity:0.85; }
+  .nav-links { display:flex; gap:2.5rem; list-style:none; }
+  .nav-links a { font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.7); transition:color 0.2s; }
+  .nav-links a:hover { color:var(--gold-light); }
+  .nav-phone a { font-size:0.78rem; color:rgba(255,255,255,0.6); }
+  .prop-hero { position:relative; height:70vh; min-height:480px; overflow:hidden; margin-top:80px; }
+  .prop-hero-img { width:100%; height:100%; object-fit:cover; transform:scale(1.04); transition:transform 8s ease; }
+  .prop-hero-img.loaded { transform:scale(1); }
+  .prop-hero-overlay { position:absolute; inset:0; background:linear-gradient(to bottom, rgba(12,31,53,0.15) 0%, rgba(12,31,53,0.65) 100%); }
+  .prop-hero-content { position:absolute; left:4rem; bottom:3rem; }
+  .back-btn { display:inline-flex; align-items:center; gap:0.5rem; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.7); margin-bottom:1.5rem; transition:color 0.2s; background:none; border:none; padding:0; font-family:inherit; cursor:pointer; }
+  .back-btn:hover { color:var(--gold-light); }
+  .prop-status-badge { display:inline-block; font-size:0.65rem; letter-spacing:0.16em; text-transform:uppercase; padding:0.3rem 0.9rem; margin-bottom:1rem; background:var(--gold); color:var(--white); }
+  .prop-hero-content h1 { font-family:"Cormorant Garamond",serif; font-size:clamp(2.2rem,5vw,3.6rem); font-weight:300; color:var(--white); line-height:1.05; margin-bottom:0.5rem; }
+  .prop-hero-area { font-size:0.82rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.6); }
+  .prop-main { display:grid; grid-template-columns:1fr 380px; gap:0; padding:4rem 4rem 6rem; max-width:1400px; margin:0 auto; align-items:start; }
+  .gallery { position:sticky; top:100px; }
+  .gallery-main { position:relative; aspect-ratio:4/3; overflow:hidden; background:var(--cream); }
+  .gallery-main img { width:100%; height:100%; object-fit:cover; transition:opacity 0.3s; }
+  .gallery-counter { position:absolute; bottom:1rem; right:1rem; background:rgba(12,31,53,0.7); color:var(--white); font-size:0.7rem; letter-spacing:0.1em; padding:0.3rem 0.75rem; }
+  .gallery-nav { position:absolute; top:50%; transform:translateY(-50%); display:flex; justify-content:space-between; width:100%; padding:0 1rem; pointer-events:none; }
+  .gallery-arrow { pointer-events:all; width:40px; height:40px; background:rgba(12,31,53,0.6); color:var(--white); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background 0.2s; border:none; font-family:inherit; }
+  .gallery-arrow:hover { background:var(--gold); }
+  .gallery-arrow svg { width:16px; height:16px; }
+  .gallery-thumbs { display:grid; grid-template-columns:repeat(6,1fr); gap:4px; margin-top:4px; }
+  .gallery-thumb { aspect-ratio:1; overflow:hidden; cursor:pointer; opacity:0.55; transition:opacity 0.2s; }
+  .gallery-thumb:hover, .gallery-thumb.active { opacity:1; }
+  .gallery-thumb img { width:100%; height:100%; object-fit:cover; }
+  .details-card { background:var(--cream); padding:2.5rem 2rem; margin-left:3rem; position:sticky; top:100px; }
+  .details-price { font-family:"Cormorant Garamond",serif; font-size:2.1rem; font-weight:400; color:var(--navy); margin-bottom:0.25rem; }
+  .details-delivery { font-size:0.8rem; letter-spacing:0.08em; color:var(--gold); margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:1px solid var(--cream-dark); }
+  .detail-row { display:flex; justify-content:space-between; align-items:center; padding:0.85rem 0; border-bottom:1px solid var(--cream-dark); }
+  .detail-label { font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-light); }
+  .detail-value { font-size:0.88rem; color:var(--navy); text-align:right; }
+  .enquire-btn { display:block; width:100%; background:var(--navy); color:var(--white); padding:1rem; text-align:center; font-size:0.76rem; letter-spacing:0.14em; text-transform:uppercase; margin-top:2rem; transition:background 0.25s; border:none; font-family:inherit; cursor:pointer; }
+  .enquire-btn:hover { background:var(--gold); }
+  .whatsapp-btn { display:flex; align-items:center; justify-content:center; gap:0.5rem; width:100%; border:1px solid var(--border); color:var(--text-mid); padding:0.9rem; text-align:center; font-size:0.76rem; letter-spacing:0.1em; text-transform:uppercase; margin-top:0.75rem; transition:border-color 0.2s,color 0.2s; }
+  .whatsapp-btn:hover { border-color:var(--gold); color:var(--gold); }
+  .whatsapp-btn svg { width:18px; height:18px; flex-shrink:0; }
+  .prop-description { background:var(--white); padding:6rem 4rem; max-width:1400px; margin:0 auto; border-top:1px solid var(--border); }
+  .section-label { font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem; }
+  .section-title { font-family:"Cormorant Garamond",serif; font-size:clamp(1.9rem,3.5vw,2.8rem); font-weight:300; line-height:1.1; margin-bottom:1.5rem; }
+  .section-line { width:40px; height:1px; background:var(--gold); margin-bottom:2rem; }
+  .desc-text { font-size:0.97rem; line-height:1.9; color:var(--text-mid); max-width:780px; }
+  .desc-text p + p { margin-top:1.25rem; }
+  .prop-amenities { background:var(--cream); padding:6rem 4rem; max-width:1400px; margin:0 auto; }
+  .amenities-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1rem; margin-top:2.5rem; }
+  .amenity-item { display:flex; align-items:center; gap:0.75rem; padding:1rem 1.25rem; background:var(--white); border:1px solid var(--border); font-size:0.85rem; color:var(--navy); transition:border-color 0.2s; }
+  .amenity-item:hover { border-color:var(--gold); }
+  .amenity-icon { width:8px; height:8px; background:var(--gold); flex-shrink:0; border-radius:50%; }
+  .prop-contact { background:var(--navy); padding:6rem 4rem; width:100%; }
+  .prop-contact-inner { max-width:1400px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:6rem; align-items:start; }
+  .prop-contact .section-label { color:var(--gold-light); }
+  .prop-contact .section-title { color:var(--white); }
+  .prop-contact .section-line { background:var(--gold); }
+  .contact-info-text { font-size:0.92rem; color:rgba(255,255,255,0.55); line-height:1.8; }
+  .contact-details-list { margin-top:2rem; display:flex; flex-direction:column; gap:1rem; }
+  .contact-detail-item { display:flex; align-items:center; gap:0.9rem; }
+  .contact-detail-text { font-size:0.85rem; color:rgba(255,255,255,0.65); }
+  .contact-detail-text strong { color:rgba(255,255,255,0.35); font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:0.2rem; font-weight:400; }
+  .form-group { margin-bottom:1.25rem; }
+  .form-group label { display:block; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-bottom:0.5rem; }
+  .form-group input, .form-group textarea { width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:var(--white); padding:0.85rem 1rem; font-size:0.9rem; font-family:inherit; outline:none; transition:border-color 0.2s; }
+  .form-group input::placeholder, .form-group textarea::placeholder { color:rgba(255,255,255,0.25); }
+  .form-group input:focus, .form-group textarea:focus { border-color:var(--gold); }
+  .form-group textarea { resize:vertical; min-height:110px; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .btn-submit { width:100%; background:var(--gold); color:var(--white); padding:1rem; font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase; border:none; font-family:inherit; cursor:pointer; transition:background 0.25s; margin-top:0.5rem; }
+  .btn-submit:hover { background:var(--gold-light); }
+  footer { background:#07121E; padding:3rem 4rem 2rem; }
+  .footer-top { display:grid; grid-template-columns:1.8fr 1fr 1fr 1fr; gap:3rem; padding-bottom:2rem; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .footer-brand img { height:42px; width:auto; opacity:0.9; display:block; }
+  .footer-tagline { font-size:0.8rem; color:rgba(255,255,255,0.35); line-height:1.75; margin-top:1rem; max-width:220px; }
+  .footer-col h4 { font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.3); margin-bottom:1.1rem; font-weight:400; }
+  .footer-col ul { list-style:none; }
+  .footer-col li { margin-bottom:0.65rem; }
+  .footer-col a { font-size:0.8rem; color:rgba(255,255,255,0.45); transition:color 0.2s; }
+  .footer-col a:hover { color:var(--gold-light); }
+  .footer-bottom { display:flex; justify-content:space-between; align-items:center; padding-top:1.5rem; font-size:0.7rem; color:rgba(255,255,255,0.22); }
+  .footer-socials { display:flex; gap:1rem; }
+  .footer-socials a { font-size:0.7rem; color:rgba(255,255,255,0.3); transition:color 0.2s; }
+  .footer-socials a:hover { color:var(--gold-light); }
+  #waFloat { position:fixed; bottom:2rem; right:2rem; z-index:999; width:56px; height:56px; border-radius:50%; background:#25D366; color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(37,211,102,0.45); transition:transform 0.2s,box-shadow 0.2s; }
+  #waFloat:hover { transform:scale(1.08); }
+  #waFloat svg { width:30px; height:30px; }
+  @media(max-width:1100px) {
+    .prop-main { grid-template-columns:1fr; padding:3rem 2.5rem 5rem; }
+    .details-card { margin-left:0; margin-top:2.5rem; position:static; }
+    .gallery { position:static; }
+    .prop-description, .prop-amenities { padding:4.5rem 2.5rem; }
+    .prop-contact { padding:4.5rem 2.5rem; }
+    .prop-contact-inner { grid-template-columns:1fr; gap:3rem; }
+    footer { padding:3rem 2.5rem 2rem; }
+    .footer-top { grid-template-columns:1fr 1fr; gap:2rem; }
+  }
+  @media(max-width:768px) {
+    nav { padding:0 1.5rem; }
+    .nav-links { display:none; }
+    .prop-hero-content { left:1.5rem; bottom:2rem; }
+    .prop-main { padding:2.5rem 1.5rem 4rem; }
+    .prop-description, .prop-amenities { padding:4rem 1.5rem; }
+    .prop-contact { padding:4rem 1.5rem; }
+    .amenities-grid { grid-template-columns:1fr 1fr; }
+    footer { padding:3rem 1.5rem 2rem; }
+    .footer-top { grid-template-columns:1fr; }
+    .footer-bottom { flex-direction:column; gap:0.75rem; text-align:center; }
+    .form-row { grid-template-columns:1fr; }
+  }
+</style>
 </head>
 <body>
 
-<!-- ── NAV ── -->
 <nav id="mainNav">
   <div class="nav-logo">
     <a href="index.html" style="display:flex;align-items:center;gap:1rem;">
-      <img style="height:52px;width:auto;" src="AH_Logo.png" alt="At Home Realty">
+      <img src="AH_Logo.png" alt="At Home Realty" style="height:50px;width:auto;">
       <div class="nav-divider"></div>
-      <div class="nav-exp"><img src="exp_logo.png" alt="Powered by eXp" style="height:36px;width:auto;opacity:0.85;"></div>
+      <div class="nav-exp"><img src="exp_logo.png" alt="Powered by eXp" style="height:34px;width:auto;opacity:0.85;"></div>
     </a>
   </div>
   <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="index.html#listings">Properties</a></li>
+    <li><a href="index.html">Properties</a></li>
     <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Services</a></li>
+    <li><a href="index.html#faq">FAQ</a></li>
     <li><a href="index.html#contact">Contact</a></li>
   </ul>
-  <div class="nav-phone">
-    <a href="tel:+529842136512">+52 (984) 213-6512</a>
-  </div>
+  <div class="nav-phone"><a href="tel:+529842136512">+52 (984) 213-6512</a></div>
 </nav>
 
-<!-- ── HERO ── -->
-<section class="prop-hero" id="propHero">
+<section class="prop-hero">
   <img class="prop-hero-img" id="heroImg" src="" alt="">
   <div class="prop-hero-overlay"></div>
   <div class="prop-hero-content">
     <a href="index.html#listings" class="back-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      All Properties
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      <span id="backBtnText">All Properties</span>
     </a>
     <div class="prop-status-badge" id="heroStatus"></div>
     <h1 id="heroTitle"></h1>
@@ -364,7 +179,6 @@
   </div>
 </section>
 
-<!-- ── GALLERY + DETAILS ── -->
 <section class="prop-main">
   <div class="gallery">
     <div class="gallery-main">
@@ -381,139 +195,109 @@
     </div>
     <div class="gallery-thumbs" id="galleryThumbs"></div>
   </div>
-
   <div class="details-card">
     <div class="details-price" id="detailsPrice"></div>
     <div class="details-delivery" id="detailsDelivery"></div>
     <div id="detailsRows"></div>
-    <button class="enquire-btn" onclick="document.getElementById('enquireForm').scrollIntoView({behavior:'smooth'})">
-      Enquire About This Property
-    </button>
-    <a class="whatsapp-btn" id="whatsappBtn" href="https://wa.me/529842136512" target="_blank" rel="noopener">
+    <button class="enquire-btn" id="enquireBtn" onclick="document.getElementById('enquireForm').scrollIntoView({behavior:'smooth'})">Enquire About This Property</button>
+    <a class="whatsapp-btn" id="whatsappBtn" href="#" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-      WhatsApp Us
+      <span id="waBtnText">WhatsApp Us</span>
     </a>
   </div>
 </section>
 
-<!-- ── DESCRIPTION ── -->
 <section class="prop-description">
-  <p class="section-label">About This Property</p>
+  <p class="section-label" id="aboutLabel">About This Property</p>
   <h2 class="section-title" id="descTitle"></h2>
   <div class="section-line"></div>
   <div class="desc-text" id="descText"></div>
 </section>
 
-<!-- ── AMENITIES ── -->
 <section class="prop-amenities">
-  <p class="section-label">Features &amp; Amenities</p>
-  <h2 class="section-title">What's Included</h2>
+  <p class="section-label" id="amenitiesLabel">Features &amp; Amenities</p>
+  <h2 class="section-title" id="amenitiesTitle">What's Included</h2>
   <div class="section-line"></div>
   <div class="amenities-grid" id="amenitiesGrid"></div>
 </section>
 
-<!-- ── ENQUIRE FORM ── -->
 <section class="prop-contact" id="enquireForm">
   <div class="prop-contact-inner">
-    <div class="prop-contact-left">
-      <p class="section-label">Get In Touch</p>
-      <h2 class="section-title">Interested in<br>This Property?</h2>
+    <div>
+      <p class="section-label" id="contactLabel">Get In Touch</p>
+      <h2 class="section-title" id="contactTitle">Interested in<br>This Property?</h2>
       <div class="section-line"></div>
-      <p class="contact-info-text">Send us a message and one of our agents will be in touch shortly to answer any questions and arrange a viewing.</p>
+      <p class="contact-info-text" id="contactBody">Send us a message and one of our agents will be in touch shortly to answer any questions and arrange a viewing.</p>
       <div class="contact-details-list">
         <div class="contact-detail-item">
-          <span class="contact-detail-icon">📞</span>
-          <div class="contact-detail-text">
-            <strong>Phone / WhatsApp</strong>
-            <a href="tel:+529842136512" style="color:rgba(255,255,255,0.65);">+52 (984) 213-6512</a>
-          </div>
+          <span style="font-size:1.1rem;">&#128222;</span>
+          <div class="contact-detail-text"><strong id="ciPhone">Phone / WhatsApp</strong><a href="tel:+529842136512" style="color:rgba(255,255,255,0.65);">+52 (984) 213-6512</a></div>
         </div>
         <div class="contact-detail-item">
-          <span class="contact-detail-icon">✉️</span>
-          <div class="contact-detail-text">
-            <strong>Email</strong>
-            <a href="mailto:craig.verbeck@expmexico.mx" style="color:rgba(255,255,255,0.65);">craig.verbeck@expmexico.mx</a>
-          </div>
+          <span style="font-size:1.1rem;">&#9993;&#65039;</span>
+          <div class="contact-detail-text"><strong id="ciEmail">Email</strong><a href="mailto:craig.verbeck@expmexico.mx" style="color:rgba(255,255,255,0.65);">craig.verbeck@expmexico.mx</a></div>
         </div>
         <div class="contact-detail-item">
-          <span class="contact-detail-icon">📍</span>
-          <div class="contact-detail-text">
-            <strong>Location</strong>
-            Playa del Carmen, Quintana Roo
-          </div>
+          <span style="font-size:1.1rem;">&#128205;</span>
+          <div class="contact-detail-text"><strong id="ciLocation">Location</strong>Playa del Carmen, Quintana Roo</div>
         </div>
       </div>
     </div>
-    <div class="prop-contact-right">
+    <div>
       <form name="property-enquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thank-you.html">
         <input type="hidden" name="form-name" value="property-enquiry">
         <input type="hidden" name="property" id="formProperty" value="">
         <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
         <div class="form-row">
-          <div class="form-group">
-            <label>First Name</label>
-            <input type="text" name="first-name" placeholder="Jane" required>
-          </div>
-          <div class="form-group">
-            <label>Last Name</label>
-            <input type="text" name="last-name" placeholder="Smith" required>
-          </div>
+          <div class="form-group"><label id="lbl_fname">First Name</label><input type="text" name="first-name" placeholder="Jane" required></div>
+          <div class="form-group"><label id="lbl_lname">Last Name</label><input type="text" name="last-name" placeholder="Smith" required></div>
         </div>
-        <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" name="email" placeholder="jane@example.com" required>
-        </div>
-        <div class="form-group">
-          <label>Phone / WhatsApp</label>
-          <input type="tel" name="phone" placeholder="+1 (555) 000-0000">
-        </div>
-        <div class="form-group">
-          <label>Message</label>
-          <textarea name="message" placeholder="I'm interested in this property. Please send me more details..."></textarea>
-        </div>
-        <button type="submit" class="btn-submit">Send Enquiry</button>
+        <div class="form-group"><label id="lbl_email">Email Address</label><input type="email" name="email" placeholder="jane@example.com" required></div>
+        <div class="form-group"><label id="lbl_phone">Phone / WhatsApp</label><input type="tel" name="phone" placeholder="+1 (555) 000-0000"></div>
+        <div class="form-group"><label id="lbl_message">Message</label><textarea name="message" placeholder="I'm interested in this property..."></textarea></div>
+        <button type="submit" class="btn-submit" id="btnSubmit">Send Enquiry</button>
       </form>
     </div>
   </div>
 </section>
 
-<!-- ── FOOTER ── -->
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
       <img src="AH_Logo.png" alt="At Home Realty" style="height:44px;width:auto;opacity:0.9;">
-      <img src="exp_logo.png" style="height:28px;width:auto;opacity:0.6;margin-top:0.75rem;display:block;">
-      <p class="footer-tagline">A family-run real estate agency serving the Riviera Maya since 2011. Licensed, trusted, local.</p>
+      <img src="exp_logo.png" style="height:28px;width:auto;opacity:0.6;margin-top:0.75rem;">
+      <p class="footer-tagline" id="ftTagline">A family-run real estate agency serving the Riviera Maya since 2011. Licensed, trusted, local.</p>
+      <div style="margin-top:1.5rem;"><img src="AMPI_Logo.png" alt="AMPI Member" style="height:52px;width:auto;opacity:0.85;filter:brightness(0) invert(1);"></div>
     </div>
     <div class="footer-col">
-      <h4>Properties</h4>
+      <h4 id="ftProperties">Properties</h4>
       <ul>
-        <li><a href="index.html#listings">All Properties</a></li>
+        <li><a href="index.html#listings" id="ftAll">All Properties</a></li>
         <li><a href="index.html?area=Playa+del+Carmen#listings">Playa del Carmen</a></li>
         <li><a href="index.html?area=Tankah+Bay#listings">Tankah Bay</a></li>
         <li><a href="index.html?area=Puerto+Aventuras#listings">Puerto Aventuras</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Company</h4>
+      <h4 id="ftCompany">Company</h4>
       <ul>
-        <li><a href="index.html#about">About Us</a></li>
+        <li><a href="index.html#about" id="ftAbout">About Us</a></li>
         <li><a href="index.html#contact">Contact</a></li>
         <li><a href="https://www.instagram.com/athomerivieramayarealty" target="_blank" rel="noopener">Instagram</a></li>
         <li><a href="https://www.facebook.com/profile.php?id=61563775385121" target="_blank" rel="noopener">Facebook</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Contact</h4>
+      <h4 id="ftContact">Contact</h4>
       <ul>
         <li><a href="tel:+529842136512">+52 (984) 213-6512</a></li>
         <li><a href="mailto:craig.verbeck@expmexico.mx">craig.verbeck@expmexico.mx</a></li>
-        <li style="color:rgba(255,255,255,0.4);font-size:0.8rem;">Playa del Carmen,<br>Quintana Roo, México</li>
+        <li style="color:rgba(255,255,255,0.4);font-size:0.8rem;">Playa del Carmen,<br>Quintana Roo, Mexico</li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2025 At Home Realty · eXp Realty Mexico. All rights reserved.</span>
+    <span id="ftCopy">&#169; 2025 At Home Realty &middot; eXp Realty Mexico. All rights reserved.</span>
     <div class="footer-socials">
       <a href="https://www.instagram.com/athomerivieramayarealty" target="_blank" rel="noopener">Instagram</a>
       <a href="https://www.facebook.com/profile.php?id=61563775385121" target="_blank" rel="noopener">Facebook</a>
@@ -523,349 +307,173 @@
   </div>
 </footer>
 
-<!-- ── PROPERTY DATA + LOGIC ── -->
-<script>
-// ── Fetch listings from JSONBin, then boot the page ──
-const _BIN = "https://api.jsonbin.io/v3/b/6a5018fef5f4af5e2979b9de/latest";
-const _KEY = "$2a$10$aBf8XbTryUhixbcSSdD5JOmW3rBdACUhwMTEgSUgPA0K0Rfzv3izG";
-
-fetch(_BIN, { headers: { "X-Master-Key": _KEY } })
-  .then(r => r.json())
-  .then(data => {
-    window.LISTINGS = data.record;
-    bootPage();
-  })
-  .catch(e => {
-    console.error("Listings fetch failed:", e);
-    document.getElementById("heroTitle").textContent = "Unable to load property";
-  });
-
-function bootPage() {
-// ── STATUS BADGE COLOURS ──
-const STATUS_COLORS = {
-  "Pre-sale":      "#B8882E",
-  "For Sale":      "#2E6FB8",
-  "For Rent":      "#2E6FB8",
-  "Now Delivering":"#2E8B57",
-  "Sold":          "#6B7280",
-};
-
-// ── READ PROPERTY FROM URL ──
-const params = new URLSearchParams(window.location.search);
-const id     = params.get("id") || "";
-const p      = LISTINGS.find(x => x.id === id);
-
-if (!p) window.location.href = "index.html";
-
-// ── GALLERY STATE ──
-let currentIdx = 0;
-const allPhotos = (p && p.photos && p.photos.length) ? p.photos
-                : (p && (p.heroPhoto || p.image)) ? [p.heroPhoto || p.image] : [];
-
-function showPhoto(i) {
-  currentIdx = (i + allPhotos.length) % allPhotos.length;
-  const _photos = window.CURRENT_PHOTOS || [];
-  const img = document.getElementById("galleryMain");
-  img.style.opacity = "0";
-  setTimeout(() => { img.src = _photos[currentIdx]; img.style.opacity = "1"; }, 150);
-  document.getElementById("galleryCounter").textContent = `${currentIdx + 1} / ${_photos.length}`;
-  document.querySelectorAll(".gallery-thumb").forEach((el, idx) => {
-    el.classList.toggle("active", idx === currentIdx);
-  });
-}
-
-function changePhoto(dir) { showPhoto(currentIdx + dir); }
-
-// ── RENDER PAGE ──
-function render() {
-  const p = window.CURRENT_PROPERTY;
-  const allPhotos = window.CURRENT_PHOTOS || [];
-  if (!p) return;
-
-  document.title = `${p.title} | At Home Realty`;
-  document.getElementById("pageDesc").setAttribute("content",
-    `${p.title} — ${p.area}. ${p.price}. At Home Realty Riviera Maya.`);
-
-  const heroImg  = document.getElementById("heroImg");
-  heroImg.src    = p.heroPhoto || p.image || "";
-  heroImg.alt    = p.title;
-  heroImg.onload = () => heroImg.classList.add("loaded");
-
-  const badge = document.getElementById("heroStatus");
-  badge.textContent  = p.status;
-  badge.style.background = STATUS_COLORS[p.status] || "#B8882E";
-
-  document.getElementById("heroTitle").textContent = p.title;
-  document.getElementById("heroArea").textContent  = p.area;
-
-  const galMain = document.getElementById("galleryMain");
-  galMain.src = allPhotos[0] || "";
-  galMain.alt = p.title;
-  document.getElementById("galleryCounter").textContent = `1 / ${allPhotos.length || 1}`;
-
-  if (allPhotos.length <= 1) {
-    document.getElementById("prevBtn").style.display = "none";
-    document.getElementById("nextBtn").style.display = "none";
-  }
-
-  const thumbs = document.getElementById("galleryThumbs");
-  thumbs.innerHTML = allPhotos.map((src, i) => `
-    <div class="gallery-thumb${i === 0 ? " active" : ""}" onclick="showPhoto(${i})">
-      <img src="${src}" alt="${p.title} photo ${i+1}" loading="lazy">
-    </div>
-  `).join("");
-
-  document.getElementById("detailsPrice").textContent    = p.price || "";
-  document.getElementById("detailsDelivery").textContent = p.delivery ? `🕐 Delivery: ${p.delivery}` : "";
-
-  const rows = [];
-  if (p.area)       rows.push(["Location",   p.area]);
-  if (p.bedrooms)   rows.push(["Bedrooms",   p.bedrooms]);
-  if (p.bathrooms)  rows.push(["Bathrooms",  p.bathrooms]);
-  if (p.size)       rows.push(["Size",       p.size]);
-  if (p.highlights) rows.push(["Highlights", p.highlights]);
-
-  document.getElementById("detailsRows").innerHTML = rows.map(([label, val]) => `
-    <div class="detail-row">
-      <span class="detail-label">${label}</span>
-      <span class="detail-value">${val}</span>
-    </div>
-  `).join("");
-
-  const waMsg = encodeURIComponent(
-    `Hi Craig, I'm interested in ${p.title} in ${p.area}. Can you send me more information?`
-  );
-  document.getElementById("whatsappBtn").href = `https://wa.me/529842136512?text=${waMsg}`;
-
-  document.getElementById("descTitle").textContent = p.title;
-  const paragraphs = (p.description || "").split("\n\n").filter(Boolean);
-  document.getElementById("descText").innerHTML = paragraphs.map(pp => `<p>${pp}</p>`).join("");
-
-  document.getElementById("amenitiesGrid").innerHTML = (p.amenities || []).map(a => `
-    <div class="amenity-item">
-      <span class="amenity-icon"></span>
-      <span>${a}</span>
-    </div>
-  `).join("");
-
-  document.getElementById("formProperty").value = p.title;
-}
-
-// ── KEYBOARD NAVIGATION ──
-document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowLeft")  changePhoto(-1);
-  if (e.key === "ArrowRight") changePhoto(1);
-});
-
-render();
-</script>
-<!-- WhatsApp Floating Button -->
-<a href="https://wa.me/529842136512?text=Hi%20Craig%2C%20I%20found%20your%20site%20and%20I%27m%20interested%20in%20a%20property%20in%20the%20Riviera%20Maya.%20Can%20you%20help%20me%3F"
-   target="_blank" rel="noopener" id="waFloat" aria-label="Chat on WhatsApp">
+<a href="https://wa.me/529842136512?text=Hi%20Craig%2C%20I%20found%20your%20site%20and%20I%27m%20interested%20in%20a%20property%20in%20the%20Riviera%20Maya.%20Can%20you%20help%20me%3F" target="_blank" rel="noopener" id="waFloat" aria-label="Chat on WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
 </a>
-<style>
-#waFloat {
-  position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
-  width: 56px; height: 56px; border-radius: 50%;
-  background: #25D366; color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 20px rgba(37,211,102,0.45);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-#waFloat:hover {
-  transform: scale(1.08);
-  box-shadow: 0 6px 28px rgba(37,211,102,0.55);
-}
-#waFloat svg { width: 30px; height: 30px; }
-</style>
+
 <script>
-// ══════════════════════════════════════════════════════════
-//  i18n — At Home Realty | property.html
-// ══════════════════════════════════════════════════════════
 (function() {
+  var BIN = 'https://api.jsonbin.io/v3/b/6a5018fef5f4af5e2979b9de/latest';
+  var KEY = '$2a$10$aBf8XbTryUhixbcSSdD5JOmW3rBdACUhwMTEgSUgPA0K0Rfzv3izG';
+  var STATUS_COLORS = {
+    'Pre-sale':'#B8882E','For Sale':'#2E6FB8','For Rent':'#2E6FB8',
+    'Now Delivering':'#2E8B57','Sold':'#6B7280'
+  };
+  var currentIdx = 0;
+  var allPhotos  = [];
+  var currentP   = null;
 
-const T = {
-  en: {
-    nav1:"Properties", nav2:"About", nav3:"Services", nav4:"FAQ", nav5:"Contact",
-    back:"All Properties",
-    about_label:"About This Property",
-    amenities_label:"Features & Amenities",
-    amenities_title:"What's Included",
-    contact_label:"Get In Touch",
-    contact_title:"Interested in<br>This Property?",
-    contact_body:"Send us a message and one of our agents will be in touch shortly to answer any questions and arrange a viewing.",
-    enquire_btn:"Enquire About This Property",
-    wa_btn:"WhatsApp Us",
-    detail_location:"Location", detail_bedrooms:"Bedrooms", detail_bathrooms:"Bathrooms",
-    detail_size:"Size", detail_highlights:"Highlights", detail_delivery:"Delivery",
-    ci_phone:"Phone / WhatsApp", ci_email:"Email", ci_location:"Location",
-    contact_right_title:"Interested in This Property?",
-    lbl_fname:"First Name", lbl_lname:"Last Name", lbl_email:"Email Address",
-    lbl_phone:"Phone / WhatsApp", lbl_message:"Message", btn_submit:"Send Enquiry",
-    ph_fname:"Jane", ph_lname:"Smith", ph_email:"jane@example.com",
-    ph_phone:"+1 (555) 000-0000", ph_message:"I'm interested in this property...",
-    ft_tagline:"A family-run real estate agency serving the Riviera Maya since 2011. Licensed, trusted, local.",
-    ft_properties:"Properties", ft_all:"All Properties",
-    ft_company:"Company", ft_about:"About Us", ft_legal:"Legal",
-    ft_contact:"Contact", ft_privacy:"Privacy Policy", ft_sms:"SMS Terms", ft_cookie:"Cookie Policy",
-    ft_copy:"© 2025 At Home Realty · eXp Realty Mexico. All rights reserved.",
-  },
-  es: {
-    nav1:"Propiedades", nav2:"Nosotros", nav3:"Servicios", nav4:"Preguntas", nav5:"Contacto",
-    back:"Todas las Propiedades",
-    about_label:"Sobre esta Propiedad",
-    amenities_label:"Características y Amenidades",
-    amenities_title:"Lo Que Incluye",
-    contact_label:"Contáctanos",
-    contact_title:"¿Interesado en<br>esta Propiedad?",
-    contact_body:"Envíanos un mensaje y uno de nuestros agentes se pondrá en contacto contigo pronto para responder tus preguntas y coordinar una visita.",
-    enquire_btn:"Consultar sobre esta Propiedad",
-    wa_btn:"WhatsApp",
-    detail_location:"Ubicación", detail_bedrooms:"Recámaras", detail_bathrooms:"Baños",
-    detail_size:"Tamaño", detail_highlights:"Destacados", detail_delivery:"Entrega",
-    ci_phone:"Teléfono / WhatsApp", ci_email:"Correo Electrónico", ci_location:"Ubicación",
-    contact_right_title:"¿Interesado en esta Propiedad?",
-    lbl_fname:"Nombre", lbl_lname:"Apellido", lbl_email:"Correo Electrónico",
-    lbl_phone:"Teléfono / WhatsApp", lbl_message:"Mensaje", btn_submit:"Enviar Consulta",
-    ph_fname:"María", ph_lname:"García", ph_email:"maria@ejemplo.com",
-    ph_phone:"+1 (555) 000-0000", ph_message:"Me interesa esta propiedad...",
-    ft_tagline:"Agencia inmobiliaria familiar sirviendo la Riviera Maya desde 2011. Licenciados, confiables, locales.",
-    ft_properties:"Propiedades", ft_all:"Todas las Propiedades",
-    ft_company:"Empresa", ft_about:"Nosotros", ft_legal:"Legal",
-    ft_contact:"Contacto", ft_privacy:"Política de Privacidad", ft_sms:"Términos de SMS", ft_cookie:"Política de Cookies",
-    ft_copy:"© 2025 At Home Realty · eXp Realty Mexico. Todos los derechos reservados.",
+  function g(id) { return document.getElementById(id); }
+
+  window.changePhoto = function(dir) {
+    if (!allPhotos.length) return;
+    currentIdx = (currentIdx + dir + allPhotos.length) % allPhotos.length;
+    var img = g('galleryMain');
+    img.style.opacity = '0';
+    setTimeout(function() { img.src = allPhotos[currentIdx]; img.style.opacity = '1'; }, 150);
+    g('galleryCounter').textContent = (currentIdx + 1) + ' / ' + allPhotos.length;
+    document.querySelectorAll('.gallery-thumb').forEach(function(t, i) {
+      t.classList.toggle('active', i === currentIdx);
+    });
+  };
+
+  function renderProperty(p, lang) {
+    currentP = p;
+    lang = lang || window._lang || 'en';
+    var es = (lang === 'es');
+
+    document.title = p.title + ' | At Home Realty';
+    g('pageDesc').setAttribute('content', p.title + ' - ' + p.area + '. ' + (p.price||'') + '. At Home Realty Riviera Maya.');
+    var hero = g('heroImg');
+    hero.src = p.heroPhoto || p.image || '';
+    hero.alt = p.title;
+    hero.onload = function() { hero.classList.add('loaded'); };
+    g('heroStatus').textContent = p.status || '';
+    g('heroStatus').style.background = STATUS_COLORS[p.status] || '#B8882E';
+    g('heroTitle').textContent = p.title;
+    g('heroArea').textContent  = p.area || '';
+    g('formProperty').value    = p.title;
+
+    allPhotos = (p.photos && p.photos.length) ? p.photos : (p.heroPhoto || p.image) ? [p.heroPhoto || p.image] : [];
+    g('galleryMain').src = allPhotos[0] || '';
+    g('galleryMain').alt = p.title;
+    g('galleryCounter').textContent = '1 / ' + (allPhotos.length || 1);
+    g('prevBtn').style.display = allPhotos.length > 1 ? '' : 'none';
+    g('nextBtn').style.display = allPhotos.length > 1 ? '' : 'none';
+    g('galleryThumbs').innerHTML = allPhotos.map(function(src, i) {
+      return '<div class="gallery-thumb' + (i===0?' active':'') + '" onclick="changePhoto(' + (i - currentIdx) + ')"><img src="' + src + '" loading="lazy"></div>';
+    }).join('');
+
+    g('detailsPrice').textContent = p.price || '';
+    var dlabel = es ? 'Entrega' : 'Delivery';
+    g('detailsDelivery').textContent = p.delivery ? dlabel + ': ' + p.delivery : '';
+
+    var lbl = es
+      ? {Location:'Ubicacion',Bedrooms:'Recamaras',Bathrooms:'Banos',Size:'Tamano',Highlights:'Destacados'}
+      : {Location:'Location', Bedrooms:'Bedrooms', Bathrooms:'Bathrooms',Size:'Size',Highlights:'Highlights'};
+    var rows = [];
+    if (p.area)       rows.push([lbl.Location,   p.area]);
+    if (p.bedrooms)   rows.push([lbl.Bedrooms,   p.bedrooms]);
+    if (p.bathrooms)  rows.push([lbl.Bathrooms,  p.bathrooms]);
+    if (p.size)       rows.push([lbl.Size,        p.size]);
+    if (p.highlights) rows.push([lbl.Highlights, (es && p.highlights_es) ? p.highlights_es : p.highlights]);
+    g('detailsRows').innerHTML = rows.map(function(r) {
+      return '<div class="detail-row"><span class="detail-label">' + r[0] + '</span><span class="detail-value">' + r[1] + '</span></div>';
+    }).join('');
+
+    var waMsg = encodeURIComponent("Hi Craig, I'm interested in " + p.title + " in " + p.area + ". Can you send me more information?");
+    g('whatsappBtn').href = 'https://wa.me/529842136512?text=' + waMsg;
+
+    g('descTitle').textContent = p.title;
+    var desc = (es && p.description_es) ? p.description_es : (p.description || '');
+    g('descText').innerHTML = desc.split('\n\n').filter(Boolean).map(function(para) {
+      return '<p>' + para + '</p>';
+    }).join('');
+
+    var amen = (es && p.amenities_es) ? p.amenities_es : (p.amenities || []);
+    g('amenitiesGrid').innerHTML = amen.map(function(a) {
+      return '<div class="amenity-item"><span class="amenity-icon"></span><span>' + a + '</span></div>';
+    }).join('');
   }
-};
 
-// Detail label mapping for render()
-window.DETAIL_LABELS = {
-  en: { Location:'Location', Bedrooms:'Bedrooms', Bathrooms:'Bathrooms', Size:'Size', Highlights:'Highlights', delivery_prefix:'🕐 Delivery: ' },
-  es: { Location:'Ubicación', Bedrooms:'Recámaras', Bathrooms:'Baños', Size:'Tamaño', Highlights:'Destacados', delivery_prefix:'🕐 Entrega: ' },
-};
+  window.setLang = function(lang) {
+    window._lang = lang;
+    localStorage.setItem('ahr_lang', lang);
+    var es = (lang === 'es');
+    var navEN = ['Properties','About','Services','FAQ','Contact'];
+    var navES = ['Propiedades','Nosotros','Servicios','Preguntas','Contacto'];
+    document.querySelectorAll('.nav-links a').forEach(function(a, i) { a.textContent = es ? navES[i] : navEN[i]; });
+    g('backBtnText').textContent    = es ? 'Todas las Propiedades' : 'All Properties';
+    g('aboutLabel').textContent     = es ? 'Sobre esta Propiedad'  : 'About This Property';
+    g('amenitiesLabel').textContent = es ? 'Caracteristicas y Amenidades' : 'Features & Amenities';
+    g('amenitiesTitle').textContent = es ? 'Lo Que Incluye' : "What's Included";
+    g('contactLabel').textContent   = es ? 'Contactanos' : 'Get In Touch';
+    g('contactTitle').innerHTML     = es ? 'Interesado en<br>esta Propiedad?' : 'Interested in<br>This Property?';
+    g('contactBody').textContent    = es ? 'Envianos un mensaje y uno de nuestros agentes se pondra en contacto contigo pronto.' : 'Send us a message and one of our agents will be in touch shortly to answer any questions and arrange a viewing.';
+    g('enquireBtn').textContent     = es ? 'Consultar sobre esta Propiedad' : 'Enquire About This Property';
+    g('waBtnText').textContent      = es ? 'WhatsApp' : 'WhatsApp Us';
+    g('btnSubmit').textContent      = es ? 'Enviar Consulta' : 'Send Enquiry';
+    g('lbl_fname').textContent      = es ? 'Nombre' : 'First Name';
+    g('lbl_lname').textContent      = es ? 'Apellido' : 'Last Name';
+    g('lbl_email').textContent      = es ? 'Correo Electronico' : 'Email Address';
+    g('lbl_phone').textContent      = es ? 'Telefono / WhatsApp' : 'Phone / WhatsApp';
+    g('lbl_message').textContent    = es ? 'Mensaje' : 'Message';
+    g('ciPhone').textContent        = es ? 'Telefono / WhatsApp' : 'Phone / WhatsApp';
+    g('ciEmail').textContent        = es ? 'Correo Electronico' : 'Email';
+    g('ciLocation').textContent     = es ? 'Ubicacion' : 'Location';
+    g('ftTagline').textContent      = es ? 'Agencia inmobiliaria familiar sirviendo la Riviera Maya desde 2011.' : 'A family-run real estate agency serving the Riviera Maya since 2011. Licensed, trusted, local.';
+    g('ftProperties').textContent   = es ? 'Propiedades' : 'Properties';
+    g('ftAll').textContent          = es ? 'Todas las Propiedades' : 'All Properties';
+    g('ftCompany').textContent      = es ? 'Empresa' : 'Company';
+    g('ftAbout').textContent        = es ? 'Nosotros' : 'About Us';
+    g('ftContact').textContent      = es ? 'Contacto' : 'Contact';
+    g('ftCopy').textContent         = es ? 'Copyright 2025 At Home Realty - eXp Realty Mexico. Todos los derechos reservados.' : 'Copyright 2025 At Home Realty - eXp Realty Mexico. All rights reserved.';
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.style.color = btn.dataset.lang === lang ? '#D4A94A' : 'rgba(255,255,255,0.45)';
+    });
+    document.documentElement.lang = es ? 'es' : 'en';
+    if (currentP) renderProperty(currentP, lang);
+  };
 
-const MAP = [
-  ['.nav-links li:nth-child(1) a','nav1'],
-  ['.nav-links li:nth-child(2) a','nav2'],
-  ['.nav-links li:nth-child(3) a','nav3'],
-  ['.nav-links li:nth-child(4) a','nav4'],
-  ['.nav-links li:nth-child(5) a','nav5'],
-  ['.back-btn','back'],
-  ['.section-label:nth-of-type(1)','about_label'],
-  ['#amenitiesGrid + * .section-label, .prop-amenities .section-label','amenities_label'],
-  ['.prop-amenities .section-title','amenities_title'],
-  ['.prop-contact .section-label','contact_label'],
-  ['.prop-contact .section-title','contact_title',true],
-  ['.contact-info-text','contact_body'],
-  ['.enquire-btn','enquire_btn'],
-  ['.whatsapp-btn span','wa_btn'],
-  ['.btn-submit','btn_submit'],
-  ['.footer-brand .footer-tagline','ft_tagline'],
-  ['.footer-col:nth-child(2) h4','ft_properties'],
-  ['.footer-col:nth-child(2) li:nth-child(1) a','ft_all'],
-  ['.footer-col:nth-child(3) h4','ft_company'],
-  ['.footer-col:nth-child(3) li:nth-child(1) a','ft_about'],
-  ['.footer-col:nth-child(4) h4','ft_contact'],
-  ['.footer-bottom span:first-child','ft_copy'],
-];
+  // Add language toggle
+  var nav = document.getElementById('mainNav');
+  var tog = document.createElement('div');
+  tog.style.cssText = 'display:flex;align-items:center;gap:0.35rem;margin-left:0.5rem;';
+  tog.innerHTML = '<button class="lang-btn" data-lang="en" onclick="setLang('en')" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">EN</button><span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span><button class="lang-btn" data-lang="es" onclick="setLang('es')" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">ES</button>';
+  nav.appendChild(tog);
 
-const FORM_FIELDS = [
-  ['[name="first-name"]','ph_fname','lbl_fname'],
-  ['[name="last-name"]', 'ph_lname','lbl_lname'],
-  ['[name="email"]',     'ph_email','lbl_email'],
-  ['[name="phone"]',     'ph_phone','lbl_phone'],
-  ['[name="message"]',   'ph_message','lbl_message'],
-];
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft')  changePhoto(-1);
+    if (e.key === 'ArrowRight') changePhoto(1);
+  });
 
-window._lang = localStorage.getItem('ahr_lang') || 'en';
+  // Set initial language
+  window._lang = localStorage.getItem('ahr_lang') || 'en';
+  tog.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.style.color = btn.dataset.lang === window._lang ? '#D4A94A' : 'rgba(255,255,255,0.45)';
+  });
 
-function setLang(lang) {
-  window._lang = lang;
-  localStorage.setItem('ahr_lang', lang);
-  const t = T[lang];
-
-  MAP.forEach(([sel, key, html]) => {
-    document.querySelectorAll(sel).forEach(el => {
-      if (t[key] !== undefined) {
-        if (html) el.innerHTML = t[key];
-        else if (el.childNodes.length === 1 && el.childNodes[0].nodeType === 3) el.textContent = t[key];
-        else el.textContent = t[key];
+  // Fetch and render
+  fetch(BIN, {headers: {'X-Master-Key': KEY}})
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var listings = data.record;
+      var id = new URLSearchParams(window.location.search).get('id') || '';
+      var p  = null;
+      for (var i = 0; i < listings.length; i++) {
+        if (listings[i].id === id) { p = listings[i]; break; }
       }
+      if (!p) { window.location.href = 'index.html'; return; }
+      renderProperty(p, window._lang);
+      if (window._lang !== 'en') window.setLang(window._lang);
+    })
+    .catch(function(e) {
+      console.error('Could not load property:', e);
+      g('heroTitle').textContent = 'Unable to load property. Please try again.';
     });
-  });
-
-  FORM_FIELDS.forEach(([sel, phKey, lblKey]) => {
-    const el = document.querySelector(sel);
-    if (!el) return;
-    if (t[phKey]) el.placeholder = t[phKey];
-    const label = el.closest('.form-group')?.querySelector('label');
-    if (label && t[lblKey]) label.textContent = t[lblKey];
-  });
-
-  // Contact detail labels
-  const ciLabels = document.querySelectorAll('.contact-detail-text strong');
-  const ciKeys = ['ci_phone','ci_email','ci_location'];
-  ciLabels.forEach((el, i) => { if (t[ciKeys[i]]) el.textContent = t[ciKeys[i]]; });
-
-  // WhatsApp button text (has svg inside)
-  const waBtns = document.querySelectorAll('.whatsapp-btn');
-  waBtns.forEach(btn => {
-    const textNode = Array.from(btn.childNodes).find(n => n.nodeType === 3 && n.textContent.trim());
-    if (textNode) textNode.textContent = '\u00a0' + t.wa_btn;
-  });
-
-  // Re-render property content with correct language if property is loaded
-  if (window.CURRENT_PROPERTY) {
-    const p = window.CURRENT_PROPERTY;
-    // Description
-    const descEl = document.getElementById('descText');
-    const desc = lang === 'es' && p.description_es ? p.description_es : p.description;
-    if (descEl && desc) descEl.innerHTML = desc.split('\n\n').filter(Boolean).map(pp => `<p>${pp}</p>`).join('');
-    // Amenities
-    const amenGrid = document.getElementById('amenitiesGrid');
-    const amen = lang === 'es' && p.amenities_es ? p.amenities_es : p.amenities;
-    if (amenGrid && amen) amenGrid.innerHTML = amen.map(a => `<div class="amenity-item"><span class="amenity-icon"></span><span>${a}</span></div>`).join('');
-    // Highlights
-    const labels = window.DETAIL_LABELS[lang];
-    const hlItem = document.querySelector('.detail-row:last-child .detail-value');
-    if (hlItem && p.highlights_es && lang === 'es') hlItem.textContent = p.highlights_es;
-    // Detail row labels
-    document.querySelectorAll('.detail-label').forEach(el => {
-      const key = Object.keys(window.DETAIL_LABELS.en).find(k => window.DETAIL_LABELS.en[k] === el.textContent);
-      if (key && labels[key]) el.textContent = labels[key];
-    });
-    // Delivery prefix
-    const delivEl = document.getElementById('detailsDelivery');
-    if (delivEl && p.delivery) delivEl.textContent = labels.delivery_prefix + p.delivery;
-  }
-
-  // Toggle button styles
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.style.color = btn.dataset.lang === lang ? '#D4A94A' : 'rgba(255,255,255,0.45)';
-  });
-  document.documentElement.lang = lang === 'es' ? 'es' : 'en';
-}
-
-function addToggle() {
-  const nav = document.getElementById('mainNav');
-  if (!nav || document.getElementById('langToggle')) return;
-  const toggle = document.createElement('div');
-  toggle.id = 'langToggle';
-  toggle.style.cssText = 'display:flex;align-items:center;gap:0.35rem;margin-left:0.5rem;';
-  toggle.innerHTML = `
-    <button class="lang-btn" data-lang="en" onclick="setLang('en')" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">EN</button>
-    <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
-    <button class="lang-btn" data-lang="es" onclick="setLang('es')" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">ES</button>`;
-  nav.appendChild(toggle);
-}
-
-addToggle();
-// Boot after page renders
-setTimeout(() => setLang(window._lang), 200);
-window.setLang = setLang;
 
 })();
-
 </script>
+
 </body>
 </html>
