@@ -439,7 +439,7 @@
   var nav = document.getElementById('mainNav');
   var tog = document.createElement('div');
   tog.style.cssText = 'display:flex;align-items:center;gap:0.35rem;margin-left:0.5rem;';
-  tog.innerHTML = '<button class="lang-btn" data-lang="en" onclick="setLang('en')" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">EN</button><span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span><button class="lang-btn" data-lang="es" onclick="setLang('es')" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">ES</button>';
+  tog.innerHTML = '<button class="lang-btn" data-lang="en" onclick="setLang(&apos;en&apos;)" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">EN</button><span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span><button class="lang-btn" data-lang="es" onclick="setLang(&apos;es&apos;)" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">ES</button>';
   nav.appendChild(tog);
 
   document.addEventListener('keydown', function(e) {
