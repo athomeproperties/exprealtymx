@@ -526,9 +526,14 @@ function renderForm(p) {
     <div class="form-section">
       <div class="form-section-title">Description</div>
       <div class="form-group full">
-        <label>Property Description</label>
-        <textarea id="f_description" rows="7" placeholder="Describe the property...">${v('description')}</textarea>
-        <span class="hint">Use a blank line between paragraphs to create paragraph breaks on the page.</span>
+        <label>Property Description (English)</label>
+        <textarea id="f_description" rows="6" placeholder="Describe the property in English...">${v('description')}</textarea>
+        <span class="hint">Use a blank line between paragraphs for line breaks.</span>
+      </div>
+      <div class="form-group full" style="margin-top:1rem;">
+        <label>Descripción de la Propiedad (Español)</label>
+        <textarea id="f_description_es" rows="6" placeholder="Describe la propiedad en español...">${v('description_es')}</textarea>
+        <span class="hint">Usa una línea en blanco entre párrafos.</span>
       </div>
     </div>
 
