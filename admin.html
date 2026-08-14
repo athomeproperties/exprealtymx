@@ -535,6 +535,11 @@ function renderForm(p) {
         <textarea id="f_description_es" rows="6" placeholder="Describe la propiedad en español...">${v('description_es')}</textarea>
         <span class="hint">Usa una línea en blanco entre párrafos.</span>
       </div>
+      <div class="form-group full" style="margin-top:1rem;">
+        <label>Description de la Propriété (Français)</label>
+        <textarea id="f_description_fr" rows="6" placeholder="Décrivez la propriété en français...">${v('description_fr')}</textarea>
+        <span class="hint">Utilisez une ligne vide entre les paragraphes.</span>
+      </div>
     </div>
 
     <div class="form-section">
@@ -594,6 +599,11 @@ function renderForm(p) {
           <textarea id="f_amenities_es" rows="7" placeholder="Alberca en Azotea&#10;Spa y Gimnasio&#10;Vistas al Océano">${(p && p.amenities_es ? p.amenities_es.join("\n") : "")}</textarea>
           <span class="hint">Una por línea.</span>
         </div>
+        <div class="form-group">
+          <label>Équipements (Français)</label>
+          <textarea id="f_amenities_fr" rows="7" placeholder="Piscine sur le Toit&#10;Spa & Salle de Sport&#10;Vues sur l'Océan">${(p && p.amenities_fr ? p.amenities_fr.join("\n") : "")}</textarea>
+          <span class="hint">Un par ligne.</span>
+        </div>
       </div>
       <div class="form-grid" style="margin-top:1rem;">
         <div class="form-group">
@@ -603,6 +613,10 @@ function renderForm(p) {
         <div class="form-group">
           <label>Destacados (Español)</label>
           <input type="text" id="f_highlights_es" value="${v('highlights_es')}" placeholder="Frente al Mar · Alberca">
+        </div>
+        <div class="form-group">
+          <label>Points Forts (Français)</label>
+          <input type="text" id="f_highlights_fr" value="${v('highlights_fr')}" placeholder="Bord de Mer · Piscine">
         </div>
       </div>
     </div>
@@ -628,6 +642,7 @@ function saveProperty() {
 
   const photos       = JSON.parse(document.getElementById("f_photos_json")?.value || "[]");
   const amenities_es = (document.getElementById("f_amenities_es")?.value || "").split("\n").map(s=>s.trim()).filter(Boolean);
+  const amenities_fr = (document.getElementById("f_amenities_fr")?.value || "").split("\n").map(s=>s.trim()).filter(Boolean);
   const amenities = document.getElementById("f_amenities").value.split("\n").map(s=>s.trim()).filter(Boolean);
 
   const entry = {
@@ -642,12 +657,15 @@ function saveProperty() {
     size:        document.getElementById("f_size").value.trim(),
     highlights:    (document.getElementById("f_highlights_en2")?.value || document.getElementById("f_highlights_basic")?.value || "").trim(),
     highlights_es: (document.getElementById("f_highlights_es")?.value || "").trim(),
+    highlights_fr: (document.getElementById("f_highlights_fr")?.value || "").trim(),
     heroPhoto:   document.getElementById("f_heroPhoto").value.trim(),
     image:       document.getElementById("f_heroPhoto").value.trim(),
     description:    document.getElementById("f_description").value.trim(),
     description_es: (document.getElementById("f_description_es")?.value || "").trim(),
+    description_fr: (document.getElementById("f_description_fr")?.value || "").trim(),
     amenities,
     amenities_es,
+    amenities_fr,
     photos,
   };
 

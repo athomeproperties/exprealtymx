@@ -366,18 +366,19 @@
     }).join('');
 
     g('detailsPrice').textContent = p.price || '';
-    var dlabel = es ? 'Entrega' : 'Delivery';
+    var dlabel = es ? 'Entrega' : fr ? 'Livraison' : 'Delivery';
     g('detailsDelivery').textContent = p.delivery ? dlabel + ': ' + p.delivery : '';
 
     var lbl = es
       ? {Location:'Ubicacion',Bedrooms:'Recamaras',Bathrooms:'Banos',Size:'Tamano',Highlights:'Destacados'}
+      : fr ? {Location:'Localisation',Bedrooms:'Chambres',Bathrooms:'Salles de Bain',Size:'Surface',Highlights:'Points Forts'}
       : {Location:'Location', Bedrooms:'Bedrooms', Bathrooms:'Bathrooms',Size:'Size',Highlights:'Highlights'};
     var rows = [];
     if (p.area)       rows.push([lbl.Location,   p.area]);
     if (p.bedrooms)   rows.push([lbl.Bedrooms,   p.bedrooms]);
     if (p.bathrooms)  rows.push([lbl.Bathrooms,  p.bathrooms]);
     if (p.size)       rows.push([lbl.Size,        p.size]);
-    if (p.highlights) rows.push([lbl.Highlights, (es && p.highlights_es) ? p.highlights_es : p.highlights]);
+    if (p.highlights) rows.push([lbl.Highlights, (es && p.highlights_es) ? p.highlights_es : (fr && p.highlights_fr) ? p.highlights_fr : p.highlights]);
     g('detailsRows').innerHTML = rows.map(function(r) {
       return '<div class="detail-row"><span class="detail-label">' + r[0] + '</span><span class="detail-value">' + r[1] + '</span></div>';
     }).join('');
@@ -386,12 +387,13 @@
     g('whatsappBtn').href = 'https://wa.me/529842136512?text=' + waMsg;
 
     g('descTitle').textContent = p.title;
-    var desc = (es && p.description_es) ? p.description_es : (p.description || '');
+    var fr = (lang === 'fr');
+    var desc = (es && p.description_es) ? p.description_es : (fr && p.description_fr) ? p.description_fr : (p.description || '');
     g('descText').innerHTML = desc.split('\n\n').filter(Boolean).map(function(para) {
       return '<p>' + para + '</p>';
     }).join('');
 
-    var amen = (es && p.amenities_es) ? p.amenities_es : (p.amenities || []);
+    var amen = (es && p.amenities_es) ? p.amenities_es : (fr && p.amenities_fr) ? p.amenities_fr : (p.amenities || []);
     g('amenitiesGrid').innerHTML = amen.map(function(a) {
       return '<div class="amenity-item"><span class="amenity-icon"></span><span>' + a + '</span></div>';
     }).join('');
@@ -403,32 +405,34 @@
     var es = (lang === 'es');
     var navEN = ['Properties','About','Services','FAQ','Contact'];
     var navES = ['Propiedades','Nosotros','Servicios','Preguntas','Contacto'];
-    document.querySelectorAll('.nav-links a').forEach(function(a, i) { a.textContent = es ? navES[i] : navEN[i]; });
-    g('backBtnText').textContent    = es ? 'Todas las Propiedades' : 'All Properties';
-    g('aboutLabel').textContent     = es ? 'Sobre esta Propiedad'  : 'About This Property';
-    g('amenitiesLabel').textContent = es ? 'Caracteristicas y Amenidades' : 'Features & Amenities';
-    g('amenitiesTitle').textContent = es ? 'Lo Que Incluye' : "What's Included";
-    g('contactLabel').textContent   = es ? 'Contactanos' : 'Get In Touch';
-    g('contactTitle').innerHTML     = es ? 'Interesado en<br>esta Propiedad?' : 'Interested in<br>This Property?';
-    g('contactBody').textContent    = es ? 'Envianos un mensaje y uno de nuestros agentes se pondra en contacto contigo pronto.' : 'Send us a message and one of our agents will be in touch shortly to answer any questions and arrange a viewing.';
-    g('enquireBtn').textContent     = es ? 'Consultar sobre esta Propiedad' : 'Enquire About This Property';
-    g('waBtnText').textContent      = es ? 'WhatsApp' : 'WhatsApp Us';
-    g('btnSubmit').textContent      = es ? 'Enviar Consulta' : 'Send Enquiry';
-    g('lbl_fname').textContent      = es ? 'Nombre' : 'First Name';
-    g('lbl_lname').textContent      = es ? 'Apellido' : 'Last Name';
-    g('lbl_email').textContent      = es ? 'Correo Electronico' : 'Email Address';
-    g('lbl_phone').textContent      = es ? 'Telefono / WhatsApp' : 'Phone / WhatsApp';
-    g('lbl_message').textContent    = es ? 'Mensaje' : 'Message';
-    g('ciPhone').textContent        = es ? 'Telefono / WhatsApp' : 'Phone / WhatsApp';
-    g('ciEmail').textContent        = es ? 'Correo Electronico' : 'Email';
-    g('ciLocation').textContent     = es ? 'Ubicacion' : 'Location';
-    g('ftTagline').textContent      = es ? 'Agencia inmobiliaria familiar sirviendo la Riviera Maya desde 2011.' : 'A family-run real estate agency serving the Riviera Maya since 2011. Licensed, trusted, local.';
-    g('ftProperties').textContent   = es ? 'Propiedades' : 'Properties';
-    g('ftAll').textContent          = es ? 'Todas las Propiedades' : 'All Properties';
-    g('ftCompany').textContent      = es ? 'Empresa' : 'Company';
-    g('ftAbout').textContent        = es ? 'Nosotros' : 'About Us';
-    g('ftContact').textContent      = es ? 'Contacto' : 'Contact';
-    g('ftCopy').textContent         = es ? 'Copyright 2025 At Home Realty - eXp Realty Mexico. Todos los derechos reservados.' : 'Copyright 2025 At Home Realty - eXp Realty Mexico. All rights reserved.';
+    var navFR = ['Propriétés','À Propos','Services','FAQ','Contact'];
+    document.querySelectorAll('.nav-links a').forEach(function(a, i) { a.textContent = es ? navES[i] : fr2 ? navFR[i] : navEN[i]; });
+    var fr2 = (lang === 'fr');
+    g('backBtnText').textContent    = es ? 'Todas las Propiedades' : fr2 ? 'Toutes les Propriétés' : 'All Properties';
+    g('aboutLabel').textContent     = es ? 'Sobre esta Propiedad'  : fr2 ? 'À Propos de cette Propriété' : 'About This Property';
+    g('amenitiesLabel').textContent = es ? 'Caracteristicas y Amenidades' : fr2 ? 'Caractéristiques & Équipements' : 'Features & Amenities';
+    g('amenitiesTitle').textContent = es ? 'Lo Que Incluye' : fr2 ? 'Ce qui est Inclus' : "What's Included";
+    g('contactLabel').textContent   = es ? 'Contactanos' : fr2 ? 'Contactez-Nous' : 'Get In Touch';
+    g('contactTitle').innerHTML     = es ? 'Interesado en<br>esta Propiedad?' : fr2 ? 'Intéressé par<br>cette Propriété ?' : 'Interested in<br>This Property?';
+    g('contactBody').textContent    = es ? 'Envianos un mensaje y uno de nuestros agentes se pondra en contacto contigo pronto.' : fr2 ? 'Envoyez-nous un message et l\'un de nos agents vous contactera rapidement pour répondre à vos questions.' : 'Send us a message and one of our agents will be in touch shortly to answer any questions and arrange a viewing.';
+    g('enquireBtn').textContent     = es ? 'Consultar sobre esta Propiedad' : fr2 ? 'Renseignements sur cette Propriété' : 'Enquire About This Property';
+    g('waBtnText').textContent      = es ? 'WhatsApp' : fr2 ? 'WhatsApp' : 'WhatsApp Us';
+    g('btnSubmit').textContent      = es ? 'Enviar Consulta' : fr2 ? 'Envoyer la Demande' : 'Send Enquiry';
+    g('lbl_fname').textContent      = es ? 'Nombre' : fr2 ? 'Prénom' : 'First Name';
+    g('lbl_lname').textContent      = es ? 'Apellido' : fr2 ? 'Nom' : 'Last Name';
+    g('lbl_email').textContent      = es ? 'Correo Electronico' : fr2 ? 'Adresse E-mail' : 'Email Address';
+    g('lbl_phone').textContent      = es ? 'Telefono / WhatsApp' : fr2 ? 'Téléphone / WhatsApp' : 'Phone / WhatsApp';
+    g('lbl_message').textContent    = es ? 'Mensaje' : fr2 ? 'Message' : 'Message';
+    g('ciPhone').textContent        = es ? 'Telefono / WhatsApp' : fr2 ? 'Téléphone / WhatsApp' : 'Phone / WhatsApp';
+    g('ciEmail').textContent        = es ? 'Correo Electronico' : fr2 ? 'E-mail' : 'Email';
+    g('ciLocation').textContent     = es ? 'Ubicacion' : fr2 ? 'Localisation' : 'Location';
+    g('ftTagline').textContent      = es ? 'Agencia inmobiliaria familiar sirviendo la Riviera Maya desde 2011.' : fr2 ? 'Agence immobilière familiale au service de la Riviera Maya depuis 2011.' : 'A family-run real estate agency serving the Riviera Maya since 2011. Licensed, trusted, local.';
+    g('ftProperties').textContent   = es ? 'Propiedades' : fr2 ? 'Propriétés' : 'Properties';
+    g('ftAll').textContent          = es ? 'Todas las Propiedades' : fr2 ? 'Toutes les Propriétés' : 'All Properties';
+    g('ftCompany').textContent      = es ? 'Empresa' : fr2 ? 'Entreprise' : 'Company';
+    g('ftAbout').textContent        = es ? 'Nosotros' : fr2 ? 'À Propos' : 'About Us';
+    g('ftContact').textContent      = es ? 'Contacto' : fr2 ? 'Contact' : 'Contact';
+    g('ftCopy').textContent         = es ? 'Copyright 2025 At Home Realty - eXp Realty Mexico. Todos los derechos reservados.' : fr2 ? '© 2025 At Home Realty - eXp Realty Mexico. Tous droits réservés.' : 'Copyright 2025 At Home Realty - eXp Realty Mexico. All rights reserved.';
     document.querySelectorAll('.lang-btn').forEach(function(btn) {
       btn.style.color = btn.dataset.lang === lang ? '#D4A94A' : 'rgba(255,255,255,0.45)';
     });
@@ -440,7 +444,7 @@
   var nav = document.getElementById('mainNav');
   var tog = document.createElement('div');
   tog.style.cssText = 'display:flex;align-items:center;gap:0.35rem;margin-left:0.5rem;';
-  tog.innerHTML = '<button class="lang-btn" data-lang="en" onclick="setLang(&apos;en&apos;)" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">EN</button><span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span><button class="lang-btn" data-lang="es" onclick="setLang(&apos;es&apos;)" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">ES</button>';
+  tog.innerHTML = '<button class="lang-btn" data-lang="en" onclick="setLang(&apos;en&apos;)" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">EN</button><span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span><button class="lang-btn" data-lang="es" onclick="setLang(&apos;es&apos;)" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">ES</button><span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span><button class="lang-btn" data-lang="fr" onclick="setLang(&apos;fr&apos;)" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;">FR</button>';
   nav.appendChild(tog);
 
   document.addEventListener('keydown', function(e) {

@@ -695,7 +695,8 @@ function buildUI() {
     btn.className = 'filter-btn' + (isAll ? ' active' : '');
     btn.dataset.enLabel = isAll ? 'All Areas' : area;
     btn.dataset.esLabel = isAll ? 'Todas las Zonas' : area;
-    btn.textContent = (window._lang === 'es') ? btn.dataset.esLabel : btn.dataset.enLabel;
+    btn.dataset.frLabel = isAll ? 'Toutes les Zones' : area;
+    btn.textContent = window._lang === 'es' ? btn.dataset.esLabel : window._lang === 'fr' ? btn.dataset.frLabel : btn.dataset.enLabel;
     btn.addEventListener('click', () => {
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -737,20 +738,26 @@ function renderListings() {
     'Pre-sale':'Preventa', 'For Sale':'En Venta', 'For Rent':'En Renta',
     'Now Delivering':'Entrega Inmediata', 'Sold':'Vendido'
   };
+  const STATUS_FR = {
+    'Pre-sale':'Prévente', 'For Sale':'À Vendre', 'For Rent':'À Louer',
+    'Now Delivering':'Livraison Immédiate', 'Sold':'Vendu'
+  };
 
   const n = visible.length;
   countEl.textContent = es
     ? `${n} propiedad${n === 1 ? '' : 'es'} encontrada${n === 1 ? '' : 's'}`
+    : fr ? `${n} propriété${n === 1 ? '' : 's'} trouvée${n === 1 ? '' : 's'}`
     : `${n} propert${n === 1 ? 'y' : 'ies'} found`;
 
   if (!visible.length) {
-    grid.innerHTML = `<div class="no-results">${es ? 'No se encontraron propiedades en esta zona.' : 'No properties found for this area.'}</div>`;
+    grid.innerHTML = `<div class="no-results">${es ? 'No se encontraron propiedades en esta zona.' : fr ? 'Aucune propriété trouvée pour cette zone.' : 'No properties found for this area.'}</div>`;
     return;
   }
 
   grid.innerHTML = visible.map(p => {
-    const status   = es ? (STATUS_ES[p.status] || p.status) : (p.status || 'For Sale');
-    const highlights = es && p.highlights_es ? p.highlights_es : p.highlights;
+    const fr = lang === 'fr';
+    const status   = es ? (STATUS_ES[p.status] || p.status) : fr ? (STATUS_FR[p.status] || p.status) : (p.status || 'For Sale');
+    const highlights = es && p.highlights_es ? p.highlights_es : fr && p.highlights_fr ? p.highlights_fr : p.highlights;
     const meta = [
       p.bedrooms  && `${p.bedrooms} ${es ? 'rec.' : 'bd'}`,
       p.bathrooms && `${p.bathrooms} ${es ? 'baños' : 'ba'}`,
@@ -762,8 +769,8 @@ function renderListings() {
       ? `<img src="${p.image || p.heroPhoto}" alt="${p.title}" loading="lazy">`
       : '<div class="no-img">No image</div>';
 
-    const deliveryLabel = es ? 'Entrega' : 'Delivery';
-    const priceLabel    = es ? 'Precio a consultar' : 'Price on request';
+    const deliveryLabel = es ? 'Entrega' : fr ? 'Livraison' : 'Delivery';
+    const priceLabel    = es ? 'Precio a consultar' : fr ? 'Prix sur demande' : 'Price on request';
 
     const body = `
       <div class="listing-img">
@@ -773,7 +780,7 @@ function renderListings() {
       <div class="listing-body">
         <span class="listing-area">${p.area}</span>
         <h3 class="listing-name">${p.title}</h3>
-        <p class="listing-price"><strong>${(p.price || priceLabel).replace(/^From /i, es ? 'Desde ' : 'From ')}</strong></p>
+        <p class="listing-price"><strong>${(p.price || priceLabel).replace(/^From /i, es ? 'Desde ' : fr ? 'À partir de ' : 'From ')}</strong></p>
         ${p.delivery ? `<p class="listing-delivery">&#128336; ${deliveryLabel} ${p.delivery}</p>` : ''}
         ${meta.length ? `<div class="listing-meta">${meta.map(m => `<span>${m}</span>`).join('')}</div>` : ''}
       </div>`;
@@ -945,7 +952,64 @@ const T = {
     ft_testimonials: "Testimonios", ft_legal: "Legal",
     ft_privacy: "Política de Privacidad", ft_sms: "Términos de SMS", ft_cookie: "Política de Cookies",
     ft_contact: "Contacto",
-    ft_copy: "© 2025 At Home Realty — eXp Realty Mexico\u00a0·\u00a0Miembro AMPI",
+,
+
+  fr: {
+    nav1: "Propriétés", nav2: "À Propos", nav3: "Services", nav4: "FAQ", nav5: "Contact",
+    hero_h1: 'Trouvez Votre <em>Propriété Idéale</em><br>au Paradis',
+    hero_sub: "Accompagnement expert pour les acheteurs internationaux à la recherche de condos, résidences et propriétés d'investissement sur la plus belle côte du Mexique.",
+    hero_cta1: "Voir les Propriétés", hero_cta2: "Nous Contacter",
+    filter_label: "Filtrer par zone",
+    listings_label: "Propriétés Disponibles",
+    listings_title: "Nos Annonces Actuelles",
+    about_label: "À Propos d'At Home Realty",
+    about_title: "Une Agence Familiale<br>Fondée sur la Confiance",
+    about_badge: "Ans dans la<br>Riviera Maya",
+    about_p1: "At Home Realty est une agence immobilière professionnelle et familiale basée à Playa del Carmen, au service des acheteurs, vendeurs et investisseurs dans toute la Riviera Maya depuis 2011.",
+    about_p2: "Nous travaillons étroitement avec une équipe juridique dédiée pour effectuer une due diligence approfondie sur chaque propriété que nous représentons — afin que votre investissement soit protégé dès le premier jour. Que vous achetiez la maison de vacances de vos rêves ou que vous constituiez un portefeuille locatif, nous vous guidons à chaque étape avec transparence et soin.",
+    stat1: "Propriétés Vendues", stat2: "Zones Couvertes", stat3: "Due Diligence 100%", stat4: "Note Clients",
+    ampi_text: "Membre Certifié AMPI\u00a0·\u00a0eXp Realty Mexico",
+    svc_label: "Ce Que Nous Faisons",
+    svc_title: "Des Experts Immobiliers à Votre Service",
+    svc1_title: "Acheter une Propriété",
+    svc1_desc: "Nous vous guidons à chaque étape de l'achat au Mexique — de l'identification de la bonne propriété à la révision juridique, la due diligence et une clôture sans accroc.",
+    svc2_title: "Vendre Votre Propriété",
+    svc2_desc: "Nous gérons chaque aspect du processus de vente — du marketing professionnel à la qualification des acheteurs et la négociation du meilleur prix en votre nom.",
+    svc3_title: "Gestion Immobilière",
+    svc3_desc: "Transformez votre investissement en revenus. Nous offrons une gestion locative vacances haut de gamme — annonces, services aux clients, entretien et rapports mensuels.",
+    test_label: "Témoignages Clients",
+    test_title: "Ce Que Disent Nos Clients",
+    test1: "At Home Realty a rendu le processus d'achat de notre maison de rêve dans la Riviera Maya complètement fluide. Leurs conseils d'experts et leur dévouement sont vraiment incomparables.",
+    test2: "Nous avons été impressionnés par le professionnalisme de l'équipe et sa connaissance approfondie du marché local. Ils nous ont aidés à trouver une solide propriété d'investissement.",
+    test3: "En tant que premiers acheteurs au Mexique, nous étions nerveux. Craig et l'équipe ont fourni un soutien inestimable et des explications claires — nous ne nous sommes jamais sentis seuls.",
+    faq_label: "Questions Fréquentes",
+    faq_title: "Foire Aux Questions",
+    faq1q: "Puis-je acheter une propriété au Mexique sans être citoyen mexicain ?",
+    faq1a: "Oui, vous le pouvez ! Cependant, dans un rayon de 50 km de la côte, vous ne pouvez pas mettre la propriété directement à votre nom. Vous pouvez ouvrir une <em>Fideicomiso</em> (fiducie bancaire) à votre nom pour détenir la propriété. Un Fideicomiso est totalement sécurisé et vous en avez le plein contrôle ; il fonctionne de manière très similaire à un Living Trust aux États-Unis.",
+    faq2q: "Quels types de financement sont disponibles ?",
+    faq2a: "Pour les investisseurs étrangers achetant au Mexique, c'est principalement un marché au comptant. Cela dit, certaines entreprises proposent désormais des financements aux investisseurs américains et canadiens avec une bonne cote de crédit. Il y a aussi la possibilité d'acheter un projet en prévente, où la plupart des promoteurs demandent seulement 30% d'avance.",
+    faq3q: "Quels sont les coûts annuels liés à la possession d'une propriété au Mexique ?",
+    faq3a: "Les principaux coûts annuels sont la taxe foncière (environ 0,1% de la valeur de la propriété) et les frais du <em>Fideicomiso</em>, qui s'élèvent en moyenne entre 500 et 600 USD par an.",
+    faq4q: "Est-il difficile de prendre sa retraite au Mexique ?",
+    faq4a: "Pas du tout. Cette région du Mexique est devenue une destination idéale pour les retraités, avec une communauté importante d'Américains et de Canadiens attirés par la beauté naturelle, les hivers chauds et la tranquillité. Les aéroports de Cancún et Tulum offrent des vols directs vers les principales villes des États-Unis, du Canada et d'Europe.",
+    contact_eyebrow: "Parlons-En",
+    contact_title: "Prêt à Trouver Votre<br>Propriété au Paradis ?",
+    contact_body: "Que vous commenciez à explorer vos options ou que vous soyez prêt à agir, nous sommes là pour vous aider. L'un de nos agents agréés vous répondra rapidement.",
+    ci_phone: "Téléphone / WhatsApp", ci_email: "E-mail", ci_location: "Localisation",
+    form_title: "Envoyez-Nous un Message",
+    lbl_fname: "Prénom", lbl_lname: "Nom", lbl_email: "Adresse E-mail",
+    lbl_phone: "Téléphone / WhatsApp", lbl_area: "Zone d'Intérêt",
+    lbl_message: "Message", btn_submit: "Envoyer le Message",
+    ph_fname: "Marie", ph_lname: "Dupont", ph_email: "marie@exemple.com",
+    ph_phone: "+1 (555) 000-0000", ph_area: "Sélectionnez une zone…",
+    ph_message: "Dites-nous ce que vous recherchez…",
+    ft_tagline: "Agence immobilière familiale au service de la Riviera Maya depuis 2011. Agréés, fiables, locaux.",
+    ft_properties: "Propriétés", ft_all: "Toutes les Propriétés",
+    ft_company: "Entreprise", ft_about: "À Propos", ft_services: "Services",
+    ft_testimonials: "Témoignages", ft_legal: "Mentions Légales",
+    ft_privacy: "Politique de Confidentialité", ft_sms: "Conditions SMS", ft_cookie: "Politique de Cookies",
+    ft_contact: "Contact",
+    ft_copy: "© 2025 At Home Realty — eXp Realty Mexico\u00a0·\u00a0Membre AMPI",
   }
 };
 
@@ -1091,7 +1155,7 @@ function setLang(lang) {
   // Re-render cards + filter labels
   if (window.LISTINGS) {
     document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.textContent = lang === 'es' ? (btn.dataset.esLabel || btn.textContent) : (btn.dataset.enLabel || btn.textContent);
+      btn.textContent = lang === 'es' ? (btn.dataset.esLabel || btn.textContent) : lang === 'fr' ? (btn.dataset.frLabel || btn.textContent) : (btn.dataset.enLabel || btn.textContent);
     });
     renderListings();
   }
@@ -1107,7 +1171,9 @@ function addToggle() {
   toggle.innerHTML = `
     <button class="lang-btn" data-lang="en" onclick="setLang('en')" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;transition:color 0.2s;" onmouseover="this.style.color='#D4A94A'" onmouseout="if(window._lang!=='en')this.style.color='rgba(255,255,255,0.45)'">EN</button>
     <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
-    <button class="lang-btn" data-lang="es" onclick="setLang('es')" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;transition:color 0.2s;" onmouseover="this.style.color='#D4A94A'" onmouseout="if(window._lang!=='es')this.style.color='rgba(255,255,255,0.45)'">ES</button>`;
+    <button class="lang-btn" data-lang="es" onclick="setLang('es')" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;transition:color 0.2s;" onmouseover="this.style.color='#D4A94A'" onmouseout="if(window._lang!=='es')this.style.color='rgba(255,255,255,0.45)'">ES</button>
+    <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
+    <button class="lang-btn" data-lang="fr" onclick="setLang('fr')" style="background:none;border:none;font-family:inherit;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.45);cursor:pointer;padding:0;" onmouseover="this.style.color='#D4A94A'" onmouseout="if(window._lang!=='fr')this.style.color='rgba(255,255,255,0.45)'">FR</button>`;
   nav.appendChild(toggle);
   // Style active button
   toggle.querySelectorAll('.lang-btn').forEach(btn => {
