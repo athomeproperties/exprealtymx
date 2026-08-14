@@ -23,6 +23,15 @@
   .hidden{ display:none !important; }
   .error{ color:#b3261e; font-size:13px; margin-top:8px; display:none; }
   .toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+  .people-panel{ display:flex; gap:24px; flex-wrap:wrap; margin-bottom:24px; }
+  .people-col{ flex:1; min-width:240px; background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px; }
+  .chip-wrap{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; min-height:24px; }
+  .chip{ display:inline-flex; align-items:center; gap:6px; background:#faf8f4; border:1px solid var(--border); border-radius:999px; padding:4px 10px; font-size:13px; }
+  .chip button{ background:none; border:none; color:var(--gray); cursor:pointer; font-size:15px; padding:0; line-height:1; }
+  .chip button:hover{ color:#b3261e; }
+  .add-row{ display:flex; gap:6px; }
+  .add-row input{ margin-top:0; }
+  .add-row button{ white-space:nowrap; padding:10px 14px; }
   table{ width:100%; border-collapse:collapse; margin-top:12px; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(11,61,58,0.06); }
   th,td{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); font-size:13px; vertical-align:top; }
   th{ font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--gray); background:#faf8f4; }
@@ -56,6 +65,26 @@
         <span class="save-status" id="saveStatus"></span>
       </div>
     </div>
+
+    <div class="people-panel">
+      <div class="people-col">
+        <h2 style="font-size:15px;">Owners</h2>
+        <div class="chip-wrap" id="ownersList"></div>
+        <div class="add-row">
+          <input type="text" id="newOwnerInput" placeholder="New owner name">
+          <button type="button" id="addOwnerBtn">Add</button>
+        </div>
+      </div>
+      <div class="people-col">
+        <h2 style="font-size:15px;">Setters</h2>
+        <div class="chip-wrap" id="settersList"></div>
+        <div class="add-row">
+          <input type="text" id="newSetterInput" placeholder="New setter name">
+          <button type="button" id="addSetterBtn">Add</button>
+        </div>
+      </div>
+    </div>
+
     <div id="tableWrap"><p>Loading...</p></div>
   </div>
 
@@ -95,9 +124,7 @@
 <script>
 /* ===================== CONFIG — edit these ===================== */
 const ADMIN_PASSWORD = "Thomas1228!";           // a DIFFERENT password from the portal — CHANGE THIS
-const OWNERS = ["Alberto", "Eric", "Therese"];
-const SETTERS = ["Alberto", "Francisco", "Eric", "Therese"];
-const STAGES = ["New Prospect","Collab Scheduled","Collab Completed","R1 Scheduled","R1 Completed","R2 Scheduled","R2 Completed","Closed Won", "Closed Lost"]
+const STAGES = ["New Prospect","Collab Scheduled","Collab Completed","R1 Scheduled","R1 Completed","R2 Scheduled","R2 Completed","Closed Won","Closed Lost"];
 const JSONBIN_BIN_ID = "6a7f79cbda38895dfee61223";
 const JSONBIN_KEY = "$2a$10$aBf8XbTryUhixbcSSdD5JOmW3rBdACUhwMTEgSUgPA0K0Rfzv3izG"; // must be the Master Key (write access)
 /* ================================================================= */
@@ -115,6 +142,8 @@ const STAGE_COLORS = {
 };
 
 let records = [];
+let owners = [];
+let setters = [];
 
 const gate = document.getElementById('gate');
 const app = document.getElementById('app');
@@ -135,8 +164,6 @@ document.getElementById('gateForm').addEventListener('submit', function(e){
 function showApp(){
   gate.classList.add('hidden');
   app.classList.remove('hidden');
-  populateDropdown('f_owner', OWNERS);
-  populateDropdown('f_setter', SETTERS);
   populateDropdown('f_stage', STAGES);
   loadRecords();
 }
@@ -160,12 +187,74 @@ async function loadRecords(){
     });
     if (!res.ok) throw new Error('Fetch failed');
     const data = await res.json();
-    records = data.record || [];
+    records = data.record.records || [];
+    owners = data.record.owners || [];
+    setters = data.record.setters || [];
+    renderPeopleLists();
     renderTable();
   } catch (err) {
     wrap.innerHTML = '<p style="color:#b3261e;">Could not load data. Check the JSONBin config.</p>';
     console.error(err);
   }
+}
+
+function renderPeopleLists(){
+  const oWrap = document.getElementById('ownersList');
+  oWrap.innerHTML = '';
+  owners.forEach(name => {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.innerHTML = `${escapeHtml(name)} <button type="button" data-name="${escapeHtml(name)}" class="removeOwner">&times;</button>`;
+    oWrap.appendChild(chip);
+  });
+  const sWrap = document.getElementById('settersList');
+  sWrap.innerHTML = '';
+  setters.forEach(name => {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.innerHTML = `${escapeHtml(name)} <button type="button" data-name="${escapeHtml(name)}" class="removeSetter">&times;</button>`;
+    sWrap.appendChild(chip);
+  });
+  document.querySelectorAll('.removeOwner').forEach(btn => btn.addEventListener('click', function(){ removeOwner(this.dataset.name); }));
+  document.querySelectorAll('.removeSetter').forEach(btn => btn.addEventListener('click', function(){ removeSetter(this.dataset.name); }));
+  populateDropdown('f_owner', owners);
+  populateDropdown('f_setter', setters);
+}
+
+document.getElementById('addOwnerBtn').addEventListener('click', async function(){
+  const input = document.getElementById('newOwnerInput');
+  const name = input.value.trim();
+  if (!name) return;
+  if (owners.includes(name)) { alert('That owner already exists.'); return; }
+  owners.push(name);
+  input.value = '';
+  renderPeopleLists();
+  await saveRecords();
+});
+
+document.getElementById('addSetterBtn').addEventListener('click', async function(){
+  const input = document.getElementById('newSetterInput');
+  const name = input.value.trim();
+  if (!name) return;
+  if (setters.includes(name)) { alert('That setter already exists.'); return; }
+  setters.push(name);
+  input.value = '';
+  renderPeopleLists();
+  await saveRecords();
+});
+
+async function removeOwner(name){
+  const inUse = records.some(r => r.owner === name);
+  if (inUse && !confirm(`"${name}" is assigned to existing prospects. Remove from the list anyway? Their existing records will keep showing "${name}" but it won't be selectable for new ones.`)) return;
+  owners = owners.filter(o => o !== name);
+  renderPeopleLists();
+  await saveRecords();
+}
+
+async function removeSetter(name){
+  setters = setters.filter(s => s !== name);
+  renderPeopleLists();
+  await saveRecords();
 }
 
 function renderTable(){
@@ -176,7 +265,7 @@ function renderTable(){
   records.forEach(r => {
     const color = STAGE_COLORS[r.stage] || '#eee';
     html += `<tr>
-      <td><strong>${escapeHtml(r.prospectName||'')}</strong><br><span style="color:var(--gray);font-size:12px;">${escapeHtml(r.phone||'')}</span></td>
+      <td><strong>${escapeHtml(r.prospectName||'')}</strong><br><span style="color:var(--gray);font-size:12px;">${escapeHtml(r.phone||'')}${r.email ? ' · ' + escapeHtml(r.email) : ''}</span></td>
       <td>${escapeHtml(r.owner||'')}</td>
       <td>${escapeHtml(r.setter||'—')}</td>
       <td><span class="stage-pill" style="background:${color};">${escapeHtml(r.stage||'')}</span></td>
@@ -203,7 +292,7 @@ function openModal(id){
   document.getElementById('f_prospectName').value = rec.prospectName || '';
   document.getElementById('f_phone').value = rec.phone || '';
   document.getElementById('f_email').value = rec.email || '';
-  document.getElementById('f_owner').value = rec.owner || OWNERS[0];
+  document.getElementById('f_owner').value = rec.owner || owners[0] || '';
   document.getElementById('f_setter').value = rec.setter || '';
   document.getElementById('f_stage').value = rec.stage || STAGES[0];
   document.getElementById('f_zoomDate').value = rec.zoomDate || '';
@@ -233,6 +322,7 @@ document.getElementById('recordForm').addEventListener('submit', async function(
     id,
     prospectName: document.getElementById('f_prospectName').value,
     phone: document.getElementById('f_phone').value,
+    email: document.getElementById('f_email').value,
     owner: document.getElementById('f_owner').value,
     setter: document.getElementById('f_setter').value,
     stage: document.getElementById('f_stage').value,
@@ -255,7 +345,7 @@ async function saveRecords(){
     const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
-      body: JSON.stringify(records)
+      body: JSON.stringify({ records, owners, setters })
     });
     if (!res.ok) throw new Error('Save failed');
     status.textContent = 'Saved ✓';
