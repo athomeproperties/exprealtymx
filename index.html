@@ -730,6 +730,7 @@ function buildUI() {
 function renderListings() {
   const lang    = window._lang || 'en';
   const es      = lang === 'es';
+  const fr      = lang === 'fr';
   const grid    = document.getElementById('listingsGrid');
   const countEl = document.getElementById('listingCount');
   const visible = activeArea ? LISTINGS.filter(p => p.area === activeArea) : LISTINGS;
@@ -755,7 +756,6 @@ function renderListings() {
   }
 
   grid.innerHTML = visible.map(p => {
-    const fr = lang === 'fr';
     const status   = es ? (STATUS_ES[p.status] || p.status) : fr ? (STATUS_FR[p.status] || p.status) : (p.status || 'For Sale');
     const highlights = es && p.highlights_es ? p.highlights_es : fr && p.highlights_fr ? p.highlights_fr : p.highlights;
     const meta = [
