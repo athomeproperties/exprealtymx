@@ -67,13 +67,18 @@
         <button class="secondary" id="logoutBtn">Log out</button>
       </div>
     </div>
+    <div style="margin-bottom:16px;">
+      <label for="stageFilter">Filter by stage</label>
+      <select id="stageFilter">
+        <option value="">All Stages</option>
+      </select>
+    </div>
     <div id="tableWrap"><p class="loading">Loading...</p></div>
   </div>
 
 <script>
 /* ===================== CONFIG — edit these ===================== */
 const PORTAL_PASSWORD = "canmex2026";               // shared password — CHANGE THIS
-const OWNERS = ["Alberto", "Eric", "Therese"];       // edit as your team changes
 const JSONBIN_BIN_ID = "6a7f79cbda38895dfee61223";
 const JSONBIN_KEY = "$2a$10$aBf8XbTryUhixbcSSdD5JOmW3rBdACUhwMTEgSUgPA0K0Rfzv3izG";
 /* ================================================================= */
@@ -90,35 +95,29 @@ const STAGE_COLORS = {
   "Closed Lost":        "#f4a6a6"
 };
 
+let allRecords = [];
+let currentRecords = [];
+
 const gate = document.getElementById('gate');
 const ownerPick = document.getElementById('ownerPick');
 const dashboard = document.getElementById('dashboard');
 const ownerSelect = document.getElementById('ownerSelect');
-
-OWNERS.forEach(name => {
-  const opt = document.createElement('option');
-  opt.value = name; opt.textContent = name;
-  ownerSelect.appendChild(opt);
-});
 
 function showScreen(el){
   [gate, ownerPick, dashboard].forEach(s => s.classList.add('hidden'));
   el.classList.remove('hidden');
 }
 
-if (sessionStorage.getItem('portalAuth') === 'true') {
-  const savedOwner = sessionStorage.getItem('portalOwner');
-  if (savedOwner) { ownerSelect.value = savedOwner; loadDashboard(savedOwner); }
-  else { showScreen(ownerPick); }
-}
-
-document.getElementById('gateForm').addEventListener('submit', function(e){
+document.getElementById('gateForm').addEventListener('submit', async function(e){
   e.preventDefault();
   const val = document.getElementById('gatePassword').value;
   if (val === PORTAL_PASSWORD) {
     sessionStorage.setItem('portalAuth', 'true');
     document.getElementById('gateError').style.display = 'none';
-    showScreen(ownerPick);
+    await loadOwners();
+    const savedOwner = sessionStorage.getItem('portalOwner');
+    if (savedOwner) { ownerSelect.value = savedOwner; loadDashboard(savedOwner); }
+    else { showScreen(ownerPick); }
   } else {
     document.getElementById('gateError').style.display = 'block';
   }
@@ -142,34 +141,66 @@ document.getElementById('logoutBtn').addEventListener('click', function(){
   showScreen(gate);
 });
 
+document.getElementById('stageFilter').addEventListener('change', function(){
+  const val = this.value;
+  const filtered = val ? currentRecords.filter(r => r.stage === val) : currentRecords;
+  renderTable(filtered);
+});
+
+async function loadOwners(){
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    const data = await res.json();
+    allRecords = data.record.records || [];
+    const owners = data.record.owners || [];
+    ownerSelect.innerHTML = '';
+    owners.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name; opt.textContent = name;
+      ownerSelect.appendChild(opt);
+    });
+    const stageSel = document.getElementById('stageFilter');
+    stageSel.innerHTML = '<option value="">All Stages</option>';
+    Object.keys(STAGE_COLORS).forEach(stage => {
+      const opt = document.createElement('option');
+      opt.value = stage; opt.textContent = stage;
+      stageSel.appendChild(opt);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Restore session
+if (sessionStorage.getItem('portalAuth') === 'true') {
+  loadOwners().then(() => {
+    const savedOwner = sessionStorage.getItem('portalOwner');
+    if (savedOwner) { ownerSelect.value = savedOwner; loadDashboard(savedOwner); }
+    else { showScreen(ownerPick); }
+  });
+}
+
 async function loadDashboard(owner){
   showScreen(dashboard);
   document.getElementById('dashTitle').textContent = owner + "'s Prospects";
   const wrap = document.getElementById('tableWrap');
   wrap.innerHTML = '<p class="loading">Loading...</p>';
-  try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-      headers: { 'X-Master-Key': JSONBIN_KEY }
-    });
-    if (!res.ok) throw new Error('Fetch failed');
-    const data = await res.json();
-    const records = (data.record || []).filter(r => r.owner === owner);
-    renderTable(records);
-  } catch (err) {
-    wrap.innerHTML = '<p class="empty">Could not load data. Check the JSONBin config in the page code.</p>';
-    console.error(err);
-  }
+  document.getElementById('stageFilter').value = '';
+  currentRecords = allRecords.filter(r => r.owner === owner);
+  renderTable(currentRecords);
 }
 
 function renderTable(records){
   const wrap = document.getElementById('tableWrap');
   if (!records.length) { wrap.innerHTML = '<p class="empty">No prospects yet.</p>'; return; }
-  records.sort((a,b) => (b.lastUpdated || '').localeCompare(a.lastUpdated || ''));
+  records = records.slice().sort((a,b) => (b.lastUpdated || '').localeCompare(a.lastUpdated || ''));
   let html = '<table><thead><tr><th>Prospect</th><th>Setter</th><th>Stage</th><th>Zoom Date</th><th>Next Step</th><th>Notes</th><th>Updated</th></tr></thead><tbody>';
   records.forEach(r => {
     const color = STAGE_COLORS[r.stage] || '#eee';
     html += `<tr>
-      <td><strong>${escapeHtml(r.prospectName || '')}</strong><br><span style="color:var(--gray); font-size:12px;">${escapeHtml(r.phone || '')}</span></td>
+      <td><strong>${escapeHtml(r.prospectName || '')}</strong><br><span style="color:var(--gray); font-size:12px;">${escapeHtml(r.phone || '')}${r.email ? ' · ' + escapeHtml(r.email) : ''}</span></td>
       <td>${escapeHtml(r.setter || '—')}</td>
       <td><span class="stage-pill" style="background:${color};">${escapeHtml(r.stage || '')}</span></td>
       <td>${escapeHtml(r.zoomDate || '')}</td>
@@ -183,7 +214,9 @@ function renderTable(records){
 }
 
 function escapeHtml(str){
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 </script>
 </body>
