@@ -1,1 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Manage Prospects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --teal:#0b3d3a; --sand:#fdfaf5; --gold:#c9a961; --gray:#666; --border:#e2ddd3; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'DM Sans', sans-serif; background:var(--sand); color:var(--teal); padding:24px; }
+  h1,h2{ font-family:'Cormorant Garamond', serif; font-weight:700; margin:0 0 8px; }
+  .card{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:32px; max-width:480px; margin:60px auto; box-shadow:0 4px 20px rgba(11,61,58,0.08); }
+  .wrap{ max-width:1100px; margin:0 auto; }
+  input, select, textarea{ width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-family:'DM Sans', sans-serif; font-size:14px; margin-top:4px; }
+  label{ font-size:12px; font-weight:500; color:var(--gray); }
+  button{ background:var(--teal); color:var(--sand); border:none; border-radius:8px; padding:10px 18px; font-family:'DM Sans', sans-serif; font-weight:700; font-size:14px; cursor:pointer; }
+  button:hover{ opacity:0.9; }
+  button.secondary{ background:transparent; color:var(--teal); border:1px solid var(--teal); }
+  button.danger{ background:#b3261e; }
+  .hidden{ display:none !important; }
+  .error{ color:#b3261e; font-size:13px; margin-top:8px; display:none; }
+  .toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+  table{ width:100%; border-collapse:collapse; margin-top:12px; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(11,61,58,0.06); }
+  th,td{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); font-size:13px; vertical-align:top; }
+  th{ font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--gray); background:#faf8f4; }
+  .stage-pill{ display:inline-block; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; color:var(--teal); white-space:nowrap; }
+  .actions button{ padding:6px 10px; font-size:12px; margin-right:6px; }
+  .modal-bg{ position:fixed; inset:0; background:rgba(11,61,58,0.4); display:flex; align-items:center; justify-content:center; padding:20px; z-index:10; }
+  .modal{ background:#fff; border-radius:12px; padding:28px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; }
+  .field{ margin-bottom:14px; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .save-status{ font-size:12px; color:var(--gray); margin-left:12px; }
+</style>
+</head>
+<body>
 
+  <div class="card" id="gate">
+    <h1>Manage Prospects</h1>
+    <p style="color:var(--gray); font-size:14px;">Admin password required.</p>
+    <form id="gateForm">
+      <label for="gatePassword">Password</label>
+      <input type="password" id="gatePassword" required>
+      <div class="error" id="gateError">Incorrect password.</div>
+      <button type="submit" style="margin-top:14px; width:100%;">Enter</button>
+    </form>
+  </div>
+
+  <div class="wrap hidden" id="app">
+    <div class="toolbar">
+      <h1>Manage Prospects</h1>
+      <div>
+        <button id="addBtn">+ Add Prospect</button>
+        <span class="save-status" id="saveStatus"></span>
+      </div>
+    </div>
+    <div id="tableWrap"><p>Loading...</p></div>
+  </div>
+
+  <div class="modal-bg hidden" id="modalBg">
+    <div class="modal">
+      <h2 id="modalTitle">Add Prospect</h2>
+      <form id="recordForm">
+        <input type="hidden" id="f_id">
+        <div class="field"><label>Prospect Name</label><input type="text" id="f_prospectName" required></div>
+        <div class="field"><label>Phone / WhatsApp</label><input type="text" id="f_phone"></div>
+        <div class="row2">
+          <div class="field"><label>Owner</label>
+            <select id="f_owner" required></select>
+          </div>
+          <div class="field"><label>Setter (optional)</label>
+            <select id="f_setter"></select>
+          </div>
+        </div>
+        <div class="field"><label>Stage</label>
+          <select id="f_stage"></select>
+        </div>
+        <div class="field"><label>Zoom Date</label><input type="date" id="f_zoomDate"></div>
+        <div class="field"><label>Next Step</label><input type="text" id="f_nextStep"></div>
+        <div class="field"><label>Notes</label><textarea id="f_notes" rows="3"></textarea></div>
+        <div class="toolbar">
+          <button type="button" class="secondary" id="cancelBtn">Cancel</button>
+          <div>
+            <button type="button" class="danger hidden" id="deleteBtn">Delete</button>
+            <button type="submit">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+/* ===================== CONFIG — edit these ===================== */
+const ADMIN_PASSWORD = "changeme-admin";           // a DIFFERENT password from the portal — CHANGE THIS
+const OWNERS = ["Alberto", "Eric", "Karla"];
+const SETTERS = ["", "Francisco"];
+const STAGES = ["New Prospect","Contacted","Zoom Scheduled","Zoom Completed","Follow-Up","Signed","Not Now","Lost"];
+const JSONBIN_BIN_ID = "YOUR_BIN_ID_HERE";
+const JSONBIN_KEY = "YOUR_JSONBIN_MASTER_KEY_HERE"; // must be the Master Key (write access)
+/* ================================================================= */
+
+const STAGE_COLORS = {
+  "New Prospect":"#d9d9d9","Contacted":"#bdd7ee","Zoom Scheduled":"#ffe699",
+  "Zoom Completed":"#c6e0b4","Follow-Up":"#f8cbad","Signed":"#a9d18e",
+  "Not Now":"#d9d9d9","Lost":"#f4a6a6"
+};
+
+let records = [];
+
+const gate = document.getElementById('gate');
+const app = document.getElementById('app');
+
+if (sessionStorage.getItem('adminAuth') === 'true') { showApp(); }
+
+document.getElementById('gateForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const val = document.getElementById('gatePassword').value;
+  if (val === ADMIN_PASSWORD) {
+    sessionStorage.setItem('adminAuth', 'true');
+    showApp();
+  } else {
+    document.getElementById('gateError').style.display = 'block';
+  }
+});
+
+function showApp(){
+  gate.classList.add('hidden');
+  app.classList.remove('hidden');
+  populateDropdown('f_owner', OWNERS);
+  populateDropdown('f_setter', SETTERS);
+  populateDropdown('f_stage', STAGES);
+  loadRecords();
+}
+
+function populateDropdown(id, list){
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  list.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v; opt.textContent = v || '(none)';
+    el.appendChild(opt);
+  });
+}
+
+async function loadRecords(){
+  const wrap = document.getElementById('tableWrap');
+  wrap.innerHTML = '<p>Loading...</p>';
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    if (!res.ok) throw new Error('Fetch failed');
+    const data = await res.json();
+    records = data.record || [];
+    renderTable();
+  } catch (err) {
+    wrap.innerHTML = '<p style="color:#b3261e;">Could not load data. Check the JSONBin config.</p>';
+    console.error(err);
+  }
+}
+
+function renderTable(){
+  const wrap = document.getElementById('tableWrap');
+  if (!records.length) { wrap.innerHTML = '<p>No prospects yet. Click "Add Prospect" to start.</p>'; return; }
+  records.sort((a,b) => (b.lastUpdated || '').localeCompare(a.lastUpdated || ''));
+  let html = '<table><thead><tr><th>Prospect</th><th>Owner</th><th>Setter</th><th>Stage</th><th>Zoom Date</th><th>Next Step</th><th>Updated</th><th></th></tr></thead><tbody>';
+  records.forEach(r => {
+    const color = STAGE_COLORS[r.stage] || '#eee';
+    html += `<tr>
+      <td><strong>${escapeHtml(r.prospectName||'')}</strong><br><span style="color:var(--gray);font-size:12px;">${escapeHtml(r.phone||'')}</span></td>
+      <td>${escapeHtml(r.owner||'')}</td>
+      <td>${escapeHtml(r.setter||'—')}</td>
+      <td><span class="stage-pill" style="background:${color};">${escapeHtml(r.stage||'')}</span></td>
+      <td>${escapeHtml(r.zoomDate||'')}</td>
+      <td>${escapeHtml(r.nextStep||'')}</td>
+      <td>${escapeHtml(r.lastUpdated||'')}</td>
+      <td class="actions"><button type="button" onclick="editRecord('${r.id}')">Edit</button></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+document.getElementById('addBtn').addEventListener('click', () => openModal(null));
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+
+function openModal(id){
+  const modalBg = document.getElementById('modalBg');
+  const isEdit = !!id;
+  document.getElementById('modalTitle').textContent = isEdit ? 'Edit Prospect' : 'Add Prospect';
+  document.getElementById('deleteBtn').classList.toggle('hidden', !isEdit);
+  const rec = isEdit ? records.find(r => r.id === id) : {};
+  document.getElementById('f_id').value = rec.id || '';
+  document.getElementById('f_prospectName').value = rec.prospectName || '';
+  document.getElementById('f_phone').value = rec.phone || '';
+  document.getElementById('f_owner').value = rec.owner || OWNERS[0];
+  document.getElementById('f_setter').value = rec.setter || '';
+  document.getElementById('f_stage').value = rec.stage || STAGES[0];
+  document.getElementById('f_zoomDate').value = rec.zoomDate || '';
+  document.getElementById('f_nextStep').value = rec.nextStep || '';
+  document.getElementById('f_notes').value = rec.notes || '';
+  modalBg.classList.remove('hidden');
+}
+
+function closeModal(){ document.getElementById('modalBg').classList.add('hidden'); }
+
+window.editRecord = function(id){ openModal(id); };
+
+document.getElementById('deleteBtn').addEventListener('click', async function(){
+  const id = document.getElementById('f_id').value;
+  if (!confirm('Delete this prospect?')) return;
+  records = records.filter(r => r.id !== id);
+  await saveRecords();
+  closeModal();
+  renderTable();
+});
+
+document.getElementById('recordForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const id = document.getElementById('f_id').value || String(Date.now());
+  const today = new Date().toISOString().slice(0,10);
+  const rec = {
+    id,
+    prospectName: document.getElementById('f_prospectName').value,
+    phone: document.getElementById('f_phone').value,
+    owner: document.getElementById('f_owner').value,
+    setter: document.getElementById('f_setter').value,
+    stage: document.getElementById('f_stage').value,
+    zoomDate: document.getElementById('f_zoomDate').value,
+    nextStep: document.getElementById('f_nextStep').value,
+    notes: document.getElementById('f_notes').value,
+    lastUpdated: today
+  };
+  const idx = records.findIndex(r => r.id === id);
+  if (idx >= 0) records[idx] = rec; else records.push(rec);
+  await saveRecords();
+  closeModal();
+  renderTable();
+});
+
+async function saveRecords(){
+  const status = document.getElementById('saveStatus');
+  status.textContent = 'Saving...';
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+      body: JSON.stringify(records)
+    });
+    if (!res.ok) throw new Error('Save failed');
+    status.textContent = 'Saved ✓';
+    setTimeout(() => status.textContent = '', 2000);
+  } catch (err) {
+    status.textContent = 'Save failed — try again';
+    console.error(err);
+  }
+}
+
+function escapeHtml(str){
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+</script>
+</body>
+</html>
