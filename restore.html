@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Property Restore | At Home Realty</title>
+<style>
+  body { font-family: sans-serif; max-width: 600px; margin: 4rem auto; padding: 2rem; background: #f8f3eb; }
+  h1 { color: #0C1F35; }
+  .status { padding: 1rem; margin: 1rem 0; border-radius: 4px; }
+  .loading { background: #fff3cd; }
+  .success { background: #d4edda; color: #155724; }
+  .error { background: #f8d7da; color: #721c24; }
+  button { background: #0C1F35; color: white; border: none; padding: 1rem 2rem; font-size: 1rem; cursor: pointer; border-radius: 4px; }
+  button:hover { background: #B8882E; }
+  pre { background: #fff; padding: 1rem; font-size: 0.8rem; overflow: auto; max-height: 300px; }
+</style>
+</head>
+<body>
+<h1>At Home Realty — Property Restore</h1>
+<p>This page will restore your property listings to JSONBin. Click the button below to proceed.</p>
+<p><strong>Warning:</strong> This will replace all current listings in JSONBin with the ones below.</p>
+<button onclick="doRestore()">Restore All Properties</button>
+<div id="status"></div>
+<div id="log"></div>
+
+<script>
+const BIN_URL = "https://api.jsonbin.io/v3/b/6a5018fef5f4af5e2979b9de";
+const BIN_KEY = "$2a$10$aBf8XbTryUhixbcSSdD5JOmW3rBdACUhwMTEgSUgPA0K0Rfzv3izG";
+
+const LISTINGS = [
+  {
+    id: "aventuras-villas-2",
+    title: "Aventuras Villas 2",
+    area: "Puerto Aventuras",
+    status: "For Sale",
+    price: "$470,000 USD",
+    delivery: "",
+    bedrooms: "2",
+    bathrooms: "2.5",
+    size: "235 m²",
+    highlights: "Canal-Front · Private Rooftop · Marina Views",
+    highlights_es: "Frente al Canal · Rooftop Privado · Vistas a la Marina",
+    highlights_fr: "Vue sur le Canal · Rooftop Privé · Vues sur la Marina",
+    image: "", heroPhoto: "", photos: [],
+    description: "Wake up to marina views every morning. This two-story penthouse sits directly on the canal inside one of Puerto Aventuras' most sought-after gated communities, with the kind of water views that make you forget you're only steps from the beach, the marina restaurants, and the dolphin lagoon.\n\nSpanning 235 m², the home is fully furnished, equipped, and decorated — ready to move into or start renting immediately. The main living area opens onto sweeping canal views, and that indoor-outdoor flow continues up to a private rooftop terrace with a palapa, perfect for shaded lounging, alfresco dining, or watching the boats drift by at sunset.\n\nThe layout offers 2 bedrooms and 2.5 bathrooms, air conditioning throughout, a fully equipped kitchen, and one dedicated parking space. As part of a private fraccionamiento, residents also have access to a pool, tennis and paddle courts, and a kids' play area — and pets are welcome.\n\nLocation: Boulevard Puerto Aventuras, inside the gated marina community, walking distance to shops, restaurants, golf, and the beach club — with Playa del Carmen and Tulum both a short drive away.",
+    description_es: "Despierta con vistas a la marina cada mañana. Este penthouse de dos pisos se ubica directamente frente al canal dentro de una de las comunidades privadas más exclusivas de Puerto Aventuras, con vistas al agua que te hacen olvidar que estás a pasos de la playa, los restaurantes de la marina y el delfinario.\n\nCon 235 m², la propiedad está completamente amueblada, equipada y decorada — lista para habitarse o ponerse en renta de inmediato. La sala principal abre a amplias vistas al canal, y ese flujo interior-exterior continúa hasta una terraza privada en la azotea con palapa, perfecta para descansar, cenar o ver los barcos pasar al atardecer.\n\nLa distribución ofrece 2 recámaras y 2.5 baños, aire acondicionado en toda la propiedad, cocina completamente equipada y un lugar de estacionamiento. Como parte de un fraccionamiento privado, los residentes también tienen acceso a alberca, canchas de tenis y pádel, y área de juegos para niños — se aceptan mascotas.",
+    description_fr: "Réveillez-vous avec des vues sur la marina chaque matin. Ce penthouse sur deux niveaux est situé directement sur le canal, dans l'une des communautés fermées les plus prisées de Puerto Aventuras, avec des vues sur l'eau qui vous font oublier que vous n'êtes qu'à quelques pas de la plage, des restaurants de la marina et du delphinium.\n\nD'une superficie de 235 m², la propriété est entièrement meublée, équipée et décorée — prête à être occupée ou mise en location immédiatement. Le séjour principal s'ouvre sur de larges vues sur le canal, et ce flux intérieur-extérieur se prolonge jusqu'à une terrasse privée sur le toit avec une palapa, idéale pour se détendre, dîner en plein air ou regarder les bateaux passer au coucher du soleil.",
+    amenities: ["Canal & Marina Views", "Private Rooftop Terrace with Palapa", "Fully Furnished & Equipped", "Community Pool", "Tennis & Paddle Courts", "Kids Play Area", "Pet Friendly", "1 Parking Space", "Gated Community", "Walking Distance to Beach & Marina"],
+    amenities_es: ["Vistas al Canal y Marina", "Terraza en Azotea con Palapa", "Totalmente Amueblado y Equipado", "Alberca Comunitaria", "Canchas de Tenis y Pádel", "Área de Juegos Infantiles", "Se Aceptan Mascotas", "1 Lugar de Estacionamiento", "Fraccionamiento Privado", "A Pasos de la Playa y la Marina"],
+    amenities_fr: ["Vues sur le Canal et la Marina", "Terrasse sur le Toit avec Palapa", "Entièrement Meublé et Équipé", "Piscine Communautaire", "Courts de Tennis et Padel", "Aire de Jeux pour Enfants", "Animaux Acceptés", "1 Place de Stationnement", "Communauté Fermée", "À Quelques Pas de la Plage et de la Marina"]
+  },
+  {
+    id: "kaab-at-the-park",
+    title: "Kaab at the Park",
+    area: "Playa del Carmen",
+    status: "For Sale",
+    price: "Price on request",
+    delivery: "",
+    bedrooms: "1",
+    bathrooms: "1.5",
+    size: "",
+    highlights: "Top Floor · Rooftop Pool · Near La Ceiba Park",
+    highlights_es: "Último Piso · Alberca en Azotea · Cerca del Parque La Ceiba",
+    highlights_fr: "Dernier Étage · Piscine sur le Toit · Près du Parc La Ceiba",
+    image: "", heroPhoto: "", photos: [],
+    description: "No upstairs neighbors, maximum light, and some of the best views in the building — this top-floor studio at Kaab in the Park is a standout in one of Playa del Carmen's most thoughtfully designed boutique developments.\n\nThe building centers around an elevated lifestyle: a rooftop infinity pool overlooking the park, a well-equipped gym, coworking spaces for remote work days, underground parking, and 24-hour security. Everything is designed to feel effortless.\n\nLocated steps from La Ceiba Park and just minutes from Quinta Avenida, Kaab in the Park positions you in one of the most desirable corners of Playa del Carmen — close enough to the energy of 5th Avenue, quiet enough to actually come home.",
+    description_es: "Sin vecinos arriba, máxima luz y algunas de las mejores vistas del edificio — este estudio en el último piso de Kaab in the Park destaca dentro de uno de los desarrollos boutique mejor diseñados de Playa del Carmen.\n\nEl edificio gira en torno a un estilo de vida elevado: alberca infinita en la azotea con vistas al parque, gimnasio bien equipado, espacios de coworking para días de trabajo remoto, estacionamiento subterráneo y seguridad 24 horas. Todo está diseñado para sentirse sin esfuerzo.\n\nUbicado a pasos del Parque La Ceiba y a solo minutos de la Quinta Avenida, Kaab in the Park te coloca en una de las esquinas más deseadas de Playa del Carmen — lo suficientemente cerca de la energía de la 5ta Avenida, y lo suficientemente tranquilo para realmente llegar a casa.",
+    description_fr: "Pas de voisins du dessus, une luminosité maximale et certaines des meilleures vues de l'immeuble — ce studio en dernier étage de Kaab in the Park se distingue dans l'un des développements boutique les mieux conçus de Playa del Carmen.\n\nL'immeuble est centré sur un style de vie élevé: piscine à débordement sur le toit avec vue sur le parc, salle de sport bien équipée, espaces de coworking, parking souterrain et sécurité 24h/24. Tout est conçu pour être sans effort.\n\nSitué à quelques pas du Parc La Ceiba et à seulement quelques minutes de la Quinta Avenida, Kaab in the Park vous place dans l'un des coins les plus prisés de Playa del Carmen.",
+    amenities: ["Top Floor — No Upstairs Neighbors", "Rooftop Infinity Pool", "Gym", "Coworking Space", "Underground Parking", "24-Hour Security", "Elevator", "Steps from La Ceiba Park", "Minutes from 5th Avenue"],
+    amenities_es: ["Último Piso — Sin Vecinos Arriba", "Alberca Infinita en Azotea", "Gimnasio", "Espacio de Coworking", "Estacionamiento Subterráneo", "Seguridad 24 Horas", "Elevador", "A Pasos del Parque La Ceiba", "A Minutos de la Quinta Avenida"],
+    amenities_fr: ["Dernier Étage — Sans Voisins Au-Dessus", "Piscine à Débordement sur le Toit", "Salle de Sport", "Espace de Coworking", "Parking Souterrain", "Sécurité 24h/24", "Ascenseur", "À Quelques Pas du Parc La Ceiba", "À Quelques Minutes de la 5ème Avenue"]
+  },
+  {
+    id: "costa-celeste-415",
+    title: "Costa Celeste — Unit 415",
+    area: "Playa del Carmen",
+    status: "For Sale",
+    price: "Price on request",
+    delivery: "End of 2027",
+    bedrooms: "1",
+    bathrooms: "1",
+    size: "58.61 m²",
+    highlights: "Resale Below Developer Price · Balcony · Near 5th Ave",
+    highlights_es: "Reventa Bajo Precio del Desarrollador · Balcón · Cerca de 5ta Av",
+    highlights_fr: "Revente En Dessous Prix Promoteur · Balcon · Près de la 5ème Ave",
+    image: "", heroPhoto: "", photos: [],
+    description: "A rare opportunity to acquire a unit in Costa Celeste at below the developer's current asking price. Unit 415, a well-proportioned one-bedroom, one-bathroom apartment with balcony spanning 58.61 m², offers a compelling entry point into one of Playa del Carmen's most accessible up-and-coming addresses.\n\nLocated in the Luis Donaldo Colosio neighborhood on Avenida 35 Norte, the development sits directly across from Walmart and approximately 600 meters from Quinta Avenida and the beach — a practical, well-connected location that makes day-to-day life easy.\n\nWith an estimated delivery at the end of 2027, this is a smart buy-in moment: the price is already set, the development is underway, and purchasing as a resale means you skip the waiting list.",
+    description_es: "Una oportunidad poco frecuente para adquirir una unidad en Costa Celeste por debajo del precio actual del desarrollador. La unidad 415, un departamento de una recámara y un baño con balcón de 58.61 m², ofrece un punto de entrada atractivo en una de las direcciones emergentes más accesibles de Playa del Carmen.\n\nUbicado en la colonia Luis Donaldo Colosio en la Avenida 35 Norte, el desarrollo se encuentra justo frente a Walmart y aproximadamente a 600 metros de la Quinta Avenida y la playa — una ubicación práctica y bien conectada que facilita la vida cotidiana.\n\nCon entrega estimada a finales de 2027, este es un momento inteligente de entrada: el precio ya está fijo, el desarrollo está en marcha, y comprar como reventa significa que te saltas la lista de espera.",
+    description_fr: "Une opportunité rare d'acquérir une unité à Costa Celeste en dessous du prix actuel du promoteur. L'unité 415, un appartement bien proportionné d'une chambre et une salle de bain avec balcon de 58,61 m², offre un point d'entrée attrayant dans l'une des adresses les plus accessibles de Playa del Carmen.\n\nSitué dans le quartier Luis Donaldo Colosio, sur l'Avenida 35 Norte, le développement se trouve juste en face du Walmart et à environ 600 mètres de la Quinta Avenida et de la plage — un emplacement pratique et bien connecté.\n\nAvec une livraison estimée fin 2027, c'est le bon moment d'acheter: le prix est déjà fixé, le développement est en cours, et acheter en revente signifie que vous sautez la liste d'attente.",
+    amenities: ["Resale Below Developer Price", "Balcony", "1 Bedroom / 1 Bathroom", "58.61 m²", "Near Walmart & 5th Avenue", "600m to Beach", "Estimated Delivery End 2027"],
+    amenities_es: ["Reventa Bajo Precio del Desarrollador", "Balcón", "1 Recámara / 1 Baño", "58.61 m²", "Cerca de Walmart y Quinta Avenida", "600m a la Playa", "Entrega Estimada Fin de 2027"],
+    amenities_fr: ["Revente En Dessous Prix Promoteur", "Balcon", "1 Chambre / 1 Salle de Bain", "58,61 m²", "Près de Walmart et 5ème Avenue", "600m de la Plage", "Livraison Estimée Fin 2027"]
+  },
+  {
+    id: "the-fives",
+    title: "The Fives Beach Residences",
+    area: "Playa del Carmen",
+    status: "For Sale",
+    price: "Price on request",
+    delivery: "",
+    bedrooms: "1",
+    bathrooms: "1",
+    size: "",
+    highlights: "Beachfront Resort · Xcalacoco · Rental Income",
+    highlights_es: "Resort Frente al Mar · Xcalacoco · Ingresos por Renta",
+    highlights_fr: "Resort en Bord de Mer · Xcalacoco · Revenus Locatifs",
+    image: "", heroPhoto: "", photos: [],
+    description: "Set within one of the Riviera Maya's most recognized beachfront resort developments, this one-bedroom unit at The Fives Beach Residences in Xcalacoco offers a rare combination of vacation home lifestyle and investment potential.\n\nThe Fives is a full-service resort community just north of Playa del Carmen, fronting a pristine stretch of Caribbean beach. Owners enjoy access to multiple pools, beach clubs, restaurants, a spa, fitness center, and concierge services — while also participating in an established rental program that generates income when the unit isn't in personal use.\n\nXcalacoco puts you close enough to the energy of Playa del Carmen while maintaining the feel of a private beach escape. This is resort living with a real estate upside.",
+    description_es: "Ubicado dentro de uno de los desarrollos de resort frente al mar más reconocidos de la Riviera Maya, esta unidad de una recámara en The Fives Beach Residences en Xcalacoco ofrece una combinación única de estilo de vida vacacional y potencial de inversión.\n\nThe Fives es una comunidad de resort de servicio completo justo al norte de Playa del Carmen, con frente a una franja prístina de playa caribeña. Los propietarios disfrutan de acceso a múltiples albercas, clubes de playa, restaurantes, spa, centro de fitness y servicios de concierge — además de participar en un programa de rentas establecido que genera ingresos cuando la unidad no está en uso personal.\n\nXcalacoco te ubica lo suficientemente cerca de la energía de Playa del Carmen, manteniendo la sensación de un refugio privado en la playa. Esto es vivir en resort con potencial inmobiliario real.",
+    description_fr: "Situé dans l'un des développements de resort en bord de mer les plus reconnus de la Riviera Maya, cette unité d'une chambre aux Fives Beach Residences à Xcalacoco offre une combinaison rare de style de vie vacances et de potentiel d'investissement.\n\nThe Fives est une communauté de resort à service complet juste au nord de Playa del Carmen, avec un accès direct à une plage caribéenne immaculée. Les propriétaires bénéficient de plusieurs piscines, clubs de plage, restaurants, spa, salle de fitness et services de conciergerie — tout en participant à un programme de location établi.\n\nXcalacoco vous place suffisamment près de l'énergie de Playa del Carmen tout en maintenant le sentiment d'une escapade privée en bord de mer.",
+    amenities: ["Beachfront Location", "Multiple Pools & Beach Club", "Full-Service Resort Amenities", "Spa & Fitness Center", "Restaurant & Concierge", "Rental Program Available", "North of Playa del Carmen", "Caribbean Beach Access"],
+    amenities_es: ["Ubicación Frente al Mar", "Múltiples Albercas y Club de Playa", "Amenidades de Resort Completo", "Spa y Centro de Fitness", "Restaurante y Concierge", "Programa de Rentas Disponible", "Al Norte de Playa del Carmen", "Acceso a Playa Caribeña"],
+    amenities_fr: ["Emplacement en Bord de Mer", "Plusieurs Piscines et Club de Plage", "Équipements Resort Complets", "Spa et Salle de Fitness", "Restaurant et Conciergerie", "Programme de Location Disponible", "Au Nord de Playa del Carmen", "Accès à la Plage Caribéenne"]
+  },
+  {
+    id: "lot-la-veleta",
+    title: "Lot in La Veleta",
+    area: "Tulum",
+    status: "For Sale",
+    price: "$990,000 MXN",
+    delivery: "",
+    bedrooms: "",
+    bathrooms: "",
+    size: "",
+    highlights: "Mixed-Use Zoning · La Veleta · Investment Opportunity",
+    highlights_es: "Zonificación Mixta · La Veleta · Oportunidad de Inversión",
+    highlights_fr: "Zonage Mixte · La Veleta · Opportunité d'Investissement",
+    image: "", heroPhoto: "", photos: [],
+    description: "A well-priced land opportunity in La Veleta, one of Tulum's most active and desirable neighborhoods for development. This mixed-use lot on Calle 9 Pte places you in the heart of the area's rapid growth, with the flexibility to build residential, commercial, or a combination of both.\n\nLa Veleta has become a destination in its own right — a mix of boutique hotels, restaurants, yoga studios, and residential projects that captures the Tulum lifestyle without the Zona Hotelera prices. With Tulum International Airport now open and the Tren Maya connecting the region, the timing for land acquisition in this area has never been stronger.\n\nThis is a straightforward opportunity for investors, developers, or anyone looking to build their own project in one of Mexico's fastest-growing destinations.",
+    description_es: "Una oportunidad de terreno bien valorada en La Veleta, uno de los barrios más activos y deseados de Tulum para el desarrollo. Este terreno de uso mixto en la Calle 9 Pte te coloca en el corazón del crecimiento acelerado de la zona, con la flexibilidad de construir residencial, comercial o una combinación de ambos.\n\nLa Veleta se ha convertido en un destino por derecho propio — una mezcla de hoteles boutique, restaurantes, estudios de yoga y proyectos residenciales que captura el estilo de vida Tulum sin los precios de la Zona Hotelera. Con el Aeropuerto Internacional de Tulum ya operativo y el Tren Maya conectando la región, el momento para adquisición de terrenos en esta área nunca ha sido más oportuno.",
+    description_fr: "Une opportunité foncière bien positionnée à La Veleta, l'un des quartiers les plus actifs et recherchés de Tulum pour le développement. Ce terrain à usage mixte sur la Calle 9 Pte vous place au cœur de la croissance rapide de la zone, avec la flexibilité de construire résidentiel, commercial ou une combinaison des deux.\n\nLa Veleta est devenu une destination à part entière — un mélange d'hôtels boutique, de restaurants, de studios de yoga et de projets résidentiels qui capture le style de vie Tulum sans les prix de la Zone Hôtelière.",
+    amenities: ["Mixed-Use Zoning", "Calle 9 Pte, La Veleta", "Tulum Location", "Near Tulum International Airport", "Tren Maya Connectivity", "High Development Potential", "Growing Neighborhood"],
+    amenities_es: ["Uso de Suelo Mixto", "Calle 9 Pte, La Veleta", "Ubicación Tulum", "Cerca del Aeropuerto Internacional de Tulum", "Conectividad Tren Maya", "Alto Potencial de Desarrollo", "Colonia en Crecimiento"],
+    amenities_fr: ["Zonage Mixte", "Calle 9 Pte, La Veleta", "Localisation Tulum", "Près de l'Aéroport International de Tulum", "Connectivité Tren Maya", "Fort Potentiel de Développement", "Quartier en Pleine Croissance"]
+  },
+  {
+    id: "villa-5",
+    title: "Villa 5",
+    area: "Tulum",
+    status: "For Sale",
+    price: "Price on request",
+    delivery: "",
+    bedrooms: "",
+    bathrooms: "",
+    size: "",
+    highlights: "Private Villa · Tulum · Investment Property",
+    highlights_es: "Villa Privada · Tulum · Propiedad de Inversión",
+    highlights_fr: "Villa Privée · Tulum · Propriété d'Investissement",
+    image: "", heroPhoto: "", photos: [],
+    description: "A private villa opportunity in the Tulum area. Contact us for full details, pricing, and availability.",
+    description_es: "Una oportunidad de villa privada en la zona de Tulum. Contáctenos para detalles completos, precios y disponibilidad.",
+    description_fr: "Une opportunité de villa privée dans la zone de Tulum. Contactez-nous pour plus de détails, les prix et la disponibilité.",
+    amenities: ["Private Villa", "Tulum Location", "Contact for Details"],
+    amenities_es: ["Villa Privada", "Ubicación Tulum", "Contactar para Detalles"],
+    amenities_fr: ["Villa Privée", "Localisation Tulum", "Contacter pour les Détails"]
+  },
+  {
+    id: "villa-mango",
+    title: "Villa Mango",
+    area: "Tulum",
+    status: "For Sale",
+    price: "Price on request",
+    delivery: "",
+    bedrooms: "3",
+    bathrooms: "",
+    size: "",
+    highlights: "3-Bed Private Villa · Región 7 · Jungle Setting",
+    highlights_es: "Villa Privada 3 Recámaras · Región 7 · Entorno de Selva",
+    highlights_fr: "Villa Privée 3 Chambres · Région 7 · Cadre Jungle",
+    image: "", heroPhoto: "", photos: [],
+    description: "Tucked into the residential streets of Región 7, Villa Mango is a three-bedroom private home that embodies the Tulum lifestyle — lush greenery, indoor-outdoor living, and the calm of a residential neighborhood just minutes from everything the area has to offer.\n\nRegión 7 is one of Tulum's most established residential zones, known for its mix of private homes, boutique rentals, and proximity to the cenotes, restaurants, and nightlife that define the Tulum experience. It's the kind of neighborhood where you feel settled in, not just visiting.\n\nWith three bedrooms, Villa Mango works as a family home, a high-performing vacation rental, or a combination of both — fully capitalizing on Tulum's year-round demand from international travelers.",
+    description_es: "Escondida en las calles residenciales de la Región 7, Villa Mango es una casa privada de tres recámaras que encarna el estilo de vida Tulum — vegetación exuberante, vida interior-exterior y la tranquilidad de un barrio residencial a minutos de todo lo que la zona tiene para ofrecer.\n\nLa Región 7 es una de las zonas residenciales más establecidas de Tulum, conocida por su mezcla de casas privadas, rentas boutique y proximidad a cenotes, restaurantes y vida nocturna. Es el tipo de barrio donde te sientes instalado, no solo de visita.\n\nCon tres recámaras, Villa Mango funciona como residencia familiar, renta vacacional de alto rendimiento, o una combinación de ambas.",
+    description_fr: "Nichée dans les rues résidentielles de la Región 7, Villa Mango est une maison privée de trois chambres qui incarne le style de vie Tulum — végétation luxuriante, vie intérieur-extérieur et le calme d'un quartier résidentiel à quelques minutes de tout ce que la région a à offrir.\n\nLa Región 7 est l'une des zones résidentielles les plus établies de Tulum, connue pour son mélange de maisons privées, de locations boutique et de la proximité des cenotes, restaurants et vie nocturne.\n\nAvec trois chambres, Villa Mango fonctionne comme résidence familiale, location de vacances à haut rendement, ou une combinaison des deux.",
+    amenities: ["3 Bedrooms", "Private Villa", "Región 7 Location", "Jungle Setting", "Minutes from Cenotes & Restaurants", "High Rental Potential", "Indoor-Outdoor Living"],
+    amenities_es: ["3 Recámaras", "Villa Privada", "Ubicación Región 7", "Entorno de Selva", "A Minutos de Cenotes y Restaurantes", "Alto Potencial de Renta", "Vida Interior-Exterior"],
+    amenities_fr: ["3 Chambres", "Villa Privée", "Localisation Región 7", "Cadre Jungle", "À Quelques Minutes des Cenotes et Restaurants", "Fort Potentiel Locatif", "Vie Intérieur-Extérieur"]
+  },
+  {
+    id: "coba-gardens",
+    title: "Coba Gardens",
+    area: "Tulum",
+    status: "For Sale",
+    price: "$2,400,000 MXN",
+    delivery: "",
+    bedrooms: "1",
+    bathrooms: "",
+    size: "",
+    highlights: "Resale · 1 Bedroom · Garden Setting",
+    highlights_es: "Reventa · 1 Recámara · Entorno de Jardín",
+    highlights_fr: "Revente · 1 Chambre · Cadre Jardin",
+    image: "", heroPhoto: "", photos: [],
+    description: "A one-bedroom resale unit at Coba Gardens, a development that earns its name — thoughtfully designed with green spaces, natural landscaping, and the kind of connection to nature that defines the best of Tulum's residential projects.\n\nThis is an established unit in a ready-to-enjoy community, available now at a resale price that represents solid value in the current Tulum market. Whether you're looking for a personal retreat, a vacation home, or an income-generating rental, Coba Gardens delivers the Tulum experience in a well-maintained setting.\n\nThe Tulum area continues to attract strong international demand, making this a compelling acquisition for buyers seeking quality property at a competitive entry point.",
+    description_es: "Una unidad de reventa de una recámara en Coba Gardens, un desarrollo que se gana su nombre — diseñado con cuidado con espacios verdes, paisajismo natural y el tipo de conexión con la naturaleza que define los mejores proyectos residenciales de Tulum.\n\nEsta es una unidad establecida en una comunidad lista para disfrutar, disponible ahora a un precio de reventa que representa un valor sólido en el mercado actual de Tulum. Ya sea que busques un retiro personal, una casa de vacaciones o una renta generadora de ingresos, Coba Gardens entrega la experiencia Tulum en un entorno bien mantenido.",
+    description_fr: "Une unité en revente d'une chambre à Coba Gardens, un développement qui porte bien son nom — conçu avec soin avec des espaces verts, un aménagement paysager naturel et le type de connexion avec la nature qui définit les meilleurs projets résidentiels de Tulum.\n\nIl s'agit d'une unité établie dans une communauté prête à être appréciée, disponible maintenant à un prix de revente qui représente une excellente valeur sur le marché actuel de Tulum.",
+    amenities: ["1 Bedroom", "Resale — Ready to Occupy", "Garden & Green Spaces", "Natural Landscaping", "Tulum Location", "High Rental Demand", "Established Community"],
+    amenities_es: ["1 Recámara", "Reventa — Lista para Habitar", "Jardín y Áreas Verdes", "Paisajismo Natural", "Ubicación Tulum", "Alta Demanda de Renta", "Comunidad Establecida"],
+    amenities_fr: ["1 Chambre", "Revente — Prête à Occuper", "Jardin et Espaces Verts", "Aménagement Paysager Naturel", "Localisation Tulum", "Forte Demande Locative", "Communauté Établie"]
+  },
+  {
+    id: "homa-kah-c3",
+    title: "Homa Kah — Studio C3",
+    area: "Tulum",
+    status: "For Sale",
+    price: "Price on request",
+    delivery: "",
+    bedrooms: "Studio",
+    bathrooms: "1",
+    size: "40 m²",
+    highlights: "Yoga Community · Fibonacci Pool · Near Aldea Zama",
+    highlights_es: "Comunidad de Yoga · Alberca Fibonacci · Cerca de Aldea Zama",
+    highlights_fr: "Communauté Yoga · Piscine Fibonacci · Près d'Aldea Zama",
+    image: "", heroPhoto: "", photos: [],
+    description: "Homa Kah is a Tulum development that goes beyond the standard amenity list — it's built around a philosophy. The yoga area, outdoor gym, library, Fibonacci pool, and communal rooftop create a community designed for residents who want more than four walls and a view.\n\nStudio C3 offers 40 m² of smart, minimalist living with a well-designed open layout, balcony/terrace access, full A/C, and a modern bathroom. The building also features coworking space, a lounge, 24-hour security, laundry facilities, and parking for each unit.\n\nLocated near Aldea Zama, one of Tulum's most established and desirable residential zones, Homa Kah is ideally positioned for personal use or the kind of vacation rental that attracts discerning international travelers drawn to the Tulum wellness lifestyle.",
+    description_es: "Homa Kah es un desarrollo en Tulum que va más allá de la lista estándar de amenidades — está construido alrededor de una filosofía. El área de yoga, gimnasio al aire libre, biblioteca, alberca Fibonacci y rooftop comunal crean una comunidad diseñada para residentes que quieren más que cuatro paredes y una vista.\n\nEl Estudio C3 ofrece 40 m² de vida inteligente y minimalista con distribución abierta bien diseñada, acceso a balcón/terraza, aire acondicionado completo y baño moderno. El edificio también cuenta con área de coworking, lounge, seguridad 24 horas, cuarto de lavado y estacionamiento para cada unidad.\n\nUbicado cerca de Aldea Zama, una de las zonas residenciales más establecidas y deseadas de Tulum, Homa Kah está idealmente posicionado para uso personal o el tipo de renta vacacional que atrae a viajeros internacionales exigentes atraídos por el estilo de vida wellness de Tulum.",
+    description_fr: "Homa Kah est un développement à Tulum qui va au-delà de la liste standard d'équipements — il est construit autour d'une philosophie. La zone de yoga, la salle de sport extérieure, la bibliothèque, la piscine Fibonacci et le rooftop communal créent une communauté conçue pour des résidents qui veulent plus que quatre murs et une vue.\n\nLe Studio C3 offre 40 m² de vie intelligente et minimaliste avec un plan ouvert bien conçu, accès balcon/terrasse, climatisation complète et salle de bain moderne. Le bâtiment dispose également d'un espace de coworking, d'un lounge, d'une sécurité 24h/24, d'une buanderie et d'un stationnement pour chaque unité.",
+    amenities: ["40 m² Studio", "Yoga Area", "Outdoor Gym", "Library", "Fibonacci Pool", "Communal Rooftop", "Coworking Space", "Lounge", "24-Hour Security", "Laundry Room", "Parking", "Near Aldea Zama"],
+    amenities_es: ["Estudio 40 m²", "Área de Yoga", "Gimnasio al Aire Libre", "Biblioteca", "Alberca Fibonacci", "Rooftop Comunal", "Espacio de Coworking", "Lounge", "Seguridad 24 Horas", "Cuarto de Lavado", "Estacionamiento", "Cerca de Aldea Zama"],
+    amenities_fr: ["Studio 40 m²", "Zone de Yoga", "Salle de Sport Extérieure", "Bibliothèque", "Piscine Fibonacci", "Rooftop Communal", "Espace de Coworking", "Lounge", "Sécurité 24h/24", "Buanderie", "Stationnement", "Près d'Aldea Zama"]
+  },
+  {
+    id: "homa-kah-d6",
+    title: "Homa Kah — Studio D6",
+    area: "Tulum",
+    status: "For Sale",
+    price: "Price on request",
+    delivery: "",
+    bedrooms: "Studio",
+    bathrooms: "1",
+    size: "40 m²",
+    highlights: "Yoga Community · Fibonacci Pool · Near Aldea Zama",
+    highlights_es: "Comunidad de Yoga · Alberca Fibonacci · Cerca de Aldea Zama",
+    highlights_fr: "Communauté Yoga · Piscine Fibonacci · Près d'Aldea Zama",
+    image: "", heroPhoto: "", photos: [],
+    description: "Homa Kah is a Tulum development built around a philosophy of wellness and community. The yoga area, outdoor gym, library, Fibonacci pool, and communal rooftop create an environment designed for residents who want more than just a place to sleep.\n\nStudio D6 at Homa Kah offers 40 m² of thoughtfully designed minimalist living, with open layout, balcony/terrace, full A/C, and a modern bathroom. Building amenities include coworking space, lounge, 24-hour security, laundry facilities, and parking for every unit.\n\nNear Aldea Zama in Tulum, ideally suited for personal use or high-performing vacation rental in one of Mexico's most in-demand destinations.",
+    description_es: "Homa Kah es un desarrollo en Tulum construido en torno a una filosofía de bienestar y comunidad. El área de yoga, gimnasio al aire libre, biblioteca, alberca Fibonacci y rooftop comunal crean un entorno diseñado para residentes que quieren más que solo un lugar para dormir.\n\nEl Estudio D6 en Homa Kah ofrece 40 m² de vida minimalista cuidadosamente diseñada, con distribución abierta, balcón/terraza, aire acondicionado completo y baño moderno. Las amenidades del edificio incluyen espacio de coworking, lounge, seguridad 24 horas, cuarto de lavado y estacionamiento para cada unidad.",
+    description_fr: "Homa Kah est un développement à Tulum construit autour d'une philosophie de bien-être et de communauté. La zone de yoga, la salle de sport extérieure, la bibliothèque, la piscine Fibonacci et le rooftop communal créent un environnement conçu pour des résidents qui veulent plus qu'un simple endroit pour dormir.\n\nLe Studio D6 offre 40 m² de vie minimaliste soigneusement conçue, avec plan ouvert, balcon/terrasse, climatisation complète et salle de bain moderne.",
+    amenities: ["40 m² Studio", "Yoga Area", "Outdoor Gym", "Library", "Fibonacci Pool", "Communal Rooftop", "Coworking Space", "Lounge", "24-Hour Security", "Laundry Room", "Parking", "Near Aldea Zama"],
+    amenities_es: ["Estudio 40 m²", "Área de Yoga", "Gimnasio al Aire Libre", "Biblioteca", "Alberca Fibonacci", "Rooftop Comunal", "Espacio de Coworking", "Lounge", "Seguridad 24 Horas", "Cuarto de Lavado", "Estacionamiento", "Cerca de Aldea Zama"],
+    amenities_fr: ["Studio 40 m²", "Zone de Yoga", "Salle de Sport Extérieure", "Bibliothèque", "Piscine Fibonacci", "Rooftop Communal", "Espace de Coworking", "Lounge", "Sécurité 24h/24", "Buanderie", "Stationnement", "Près d'Aldea Zama"]
+  },
+  {
+    id: "homa-kah-d5",
+    title: "Homa Kah — Studio D5",
+    area: "Tulum",
+    status: "For Sale",
+    price: "Price on request",
+    delivery: "",
+    bedrooms: "Studio",
+    bathrooms: "1",
+    size: "46 m²",
+    highlights: "Larger Studio · Yoga Community · Fibonacci Pool",
+    highlights_es: "Estudio Más Grande · Comunidad de Yoga · Alberca Fibonacci",
+    highlights_fr: "Studio Plus Grand · Communauté Yoga · Piscine Fibonacci",
+    image: "", heroPhoto: "", photos: [],
+    description: "Homa Kah is a Tulum development built around a philosophy of wellness and community. The yoga area, outdoor gym, library, Fibonacci pool, and communal rooftop create an environment designed for residents who want more than just a place to sleep.\n\nStudio D5 is one of the larger units in the building at 46 m², offering more breathing room and a generous open layout with balcony/terrace access, full A/C, and a modern bathroom. Building amenities include coworking space, lounge, 24-hour security, laundry facilities, and parking for every unit.\n\nNear Aldea Zama in Tulum, ideally suited for personal use or high-performing vacation rental in one of Mexico's most in-demand destinations.",
+    description_es: "Homa Kah es un desarrollo en Tulum construido en torno a una filosofía de bienestar y comunidad. El área de yoga, gimnasio al aire libre, biblioteca, alberca Fibonacci y rooftop comunal crean un entorno diseñado para residentes que quieren más.\n\nEl Estudio D5 es una de las unidades más grandes del edificio con 46 m², ofreciendo más espacio y una generosa distribución abierta con acceso a balcón/terraza, aire acondicionado completo y baño moderno. Las amenidades del edificio incluyen espacio de coworking, lounge, seguridad 24 horas, cuarto de lavado y estacionamiento para cada unidad.",
+    description_fr: "Homa Kah est un développement à Tulum construit autour d'une philosophie de bien-être et de communauté.\n\nLe Studio D5 est l'une des unités les plus grandes du bâtiment à 46 m², offrant plus d'espace et un généreux plan ouvert avec accès balcon/terrasse, climatisation complète et salle de bain moderne. Les équipements du bâtiment comprennent un espace de coworking, un lounge, une sécurité 24h/24, une buanderie et un stationnement pour chaque unité.",
+    amenities: ["46 m² Studio", "Yoga Area", "Outdoor Gym", "Library", "Fibonacci Pool", "Communal Rooftop", "Coworking Space", "Lounge", "24-Hour Security", "Laundry Room", "Parking", "Near Aldea Zama"],
+    amenities_es: ["Estudio 46 m²", "Área de Yoga", "Gimnasio al Aire Libre", "Biblioteca", "Alberca Fibonacci", "Rooftop Comunal", "Espacio de Coworking", "Lounge", "Seguridad 24 Horas", "Cuarto de Lavado", "Estacionamiento", "Cerca de Aldea Zama"],
+    amenities_fr: ["Studio 46 m²", "Zone de Yoga", "Salle de Sport Extérieure", "Bibliothèque", "Piscine Fibonacci", "Rooftop Communal", "Espace de Coworking", "Lounge", "Sécurité 24h/24", "Buanderie", "Stationnement", "Près d'Aldea Zama"]
+  },
+  {
+    id: "homa-kah-c1",
+    title: "Homa Kah — Studio C1",
+    area: "Tulum",
+    status: "For Sale",
+    price: "Price on request",
+    delivery: "",
+    bedrooms: "Studio",
+    bathrooms: "1",
+    size: "",
+    highlights: "Yoga Community · Fibonacci Pool · Near Aldea Zama",
+    highlights_es: "Comunidad de Yoga · Alberca Fibonacci · Cerca de Aldea Zama",
+    highlights_fr: "Communauté Yoga · Piscine Fibonacci · Près d'Aldea Zama",
+    image: "", heroPhoto: "", photos: [],
+    description: "Homa Kah is a Tulum development built around a philosophy of wellness and community. The yoga area, outdoor gym, library, Fibonacci pool, and communal rooftop create an environment designed for residents who want more than just a place to sleep.\n\nStudio C1 at Homa Kah offers minimalist, Tulum-style living with an open layout, balcony/terrace access, full A/C, and a modern bathroom. Building amenities include coworking space, lounge, 24-hour security, laundry facilities, and parking for every unit.\n\nNear Aldea Zama in Tulum — ideal for personal use or vacation rental investment.",
+    description_es: "Homa Kah es un desarrollo en Tulum construido en torno a una filosofía de bienestar y comunidad. El Estudio C1 ofrece vida minimalista estilo Tulum con distribución abierta, acceso a balcón/terraza, aire acondicionado completo y baño moderno. Las amenidades del edificio incluyen coworking, lounge, seguridad 24 horas, cuarto de lavado y estacionamiento.\n\nCerca de Aldea Zama en Tulum — ideal para uso personal o inversión en renta vacacional.",
+    description_fr: "Homa Kah est un développement à Tulum construit autour d'une philosophie de bien-être et de communauté. Le Studio C1 offre une vie minimaliste style Tulum avec plan ouvert, accès balcon/terrasse, climatisation complète et salle de bain moderne. Près d'Aldea Zama à Tulum — idéal pour usage personnel ou investissement locatif.",
+    amenities: ["Studio", "Yoga Area", "Outdoor Gym", "Library", "Fibonacci Pool", "Communal Rooftop", "Coworking Space", "Lounge", "24-Hour Security", "Laundry Room", "Parking", "Near Aldea Zama"],
+    amenities_es: ["Estudio", "Área de Yoga", "Gimnasio al Aire Libre", "Biblioteca", "Alberca Fibonacci", "Rooftop Comunal", "Espacio de Coworking", "Lounge", "Seguridad 24 Horas", "Cuarto de Lavado", "Estacionamiento", "Cerca de Aldea Zama"],
+    amenities_fr: ["Studio", "Zone de Yoga", "Salle de Sport Extérieure", "Bibliothèque", "Piscine Fibonacci", "Rooftop Communal", "Espace de Coworking", "Lounge", "Sécurité 24h/24", "Buanderie", "Stationnement", "Près d'Aldea Zama"]
+  },
+  {
+    id: "lot-tcc",
+    title: "Corner Lot at Tulum Country Club",
+    area: "Tulum",
+    status: "For Sale",
+    price: "Price on request",
+    delivery: "",
+    bedrooms: "",
+    bathrooms: "",
+    size: "",
+    highlights: "Corner Golf-Front Lot · Gated Community · TCC",
+    highlights_es: "Terreno Esquina Frente al Golf · Comunidad Privada · TCC",
+    highlights_fr: "Lot Coin Face au Golf · Communauté Fermée · TCC",
+    image: "", heroPhoto: "", photos: [],
+    description: "A premium corner lot inside the prestigious Tulum Country Club gated community, positioned directly on the golf course. This is one of the most desirable land configurations available in TCC — a corner position means two sides of open green space, elevated views across the fairway, and maximum privacy from neighboring builds.\n\nTulum Country Club is a master-planned community offering world-class amenities: championship golf, beach club access, pools, fitness facilities, and a security perimeter that creates a true resort-within-a-city experience. It's one of the few Tulum communities that delivers both the destination's nature-forward character and the infrastructure of an established resort.\n\nLand in TCC is finite and in consistent demand. This corner golf-front position represents a best-in-class opportunity for buyers planning to build a custom residence or investment property.",
+    description_es: "Un terreno esquina premium dentro de la prestigiosa comunidad privada de Tulum Country Club, ubicado directamente frente al campo de golf. Esta es una de las configuraciones de terreno más deseadas disponibles en TCC — una posición esquina significa dos lados de espacio verde abierto, vistas elevadas sobre la cancha y máxima privacidad.\n\nTulum Country Club es una comunidad de planificación maestra que ofrece amenidades de clase mundial: golf de campeonato, acceso a club de playa, albercas, instalaciones de fitness y un perímetro de seguridad que crea una verdadera experiencia de resort dentro de la ciudad.\n\nLos terrenos en TCC son finitos y tienen demanda constante. Esta posición esquina frente al golf representa una oportunidad de primer nivel para compradores que planean construir una residencia personalizada o propiedad de inversión.",
+    description_fr: "Un lot d'angle premium à l'intérieur de la prestigieuse communauté fermée du Tulum Country Club, positionné directement sur le parcours de golf. Il s'agit de l'une des configurations foncières les plus recherchées disponibles à TCC — une position en coin signifie deux côtés d'espace vert ouvert, des vues élevées sur le fairway et une confidentialité maximale.\n\nTulum Country Club est une communauté planifiée offrant des équipements de classe mondiale: golf de championnat, accès au club de plage, piscines, installations de fitness et un périmètre de sécurité créant une véritable expérience de resort.",
+    amenities: ["Corner Golf-Front Position", "Gated Community", "Championship Golf Access", "Beach Club Access", "Pools & Fitness Facilities", "24-Hour Security", "Resort-Style Living", "Tulum Location", "Premium Build Opportunity"],
+    amenities_es: ["Posición Esquina Frente al Golf", "Comunidad Privada", "Acceso a Golf de Campeonato", "Acceso a Club de Playa", "Albercas e Instalaciones de Fitness", "Seguridad 24 Horas", "Vida Estilo Resort", "Ubicación Tulum", "Oportunidad de Construcción Premium"],
+    amenities_fr: ["Position en Coin Face au Golf", "Communauté Fermée", "Accès Golf de Championnat", "Accès Club de Plage", "Piscines et Installations Fitness", "Sécurité 24h/24", "Vie Style Resort", "Localisation Tulum", "Opportunité de Construction Premium"]
+  },
+  {
+    id: "tao-santamar",
+    title: "Tao Santamar",
+    area: "Akumal",
+    status: "For Sale",
+    price: "Price on request",
+    delivery: "",
+    bedrooms: "2",
+    bathrooms: "",
+    size: "",
+    highlights: "2-BR Lock-Off · Akumal Punta Sur · Resale",
+    highlights_es: "Lock-Off 2 Recámaras · Akumal Punta Sur · Reventa",
+    highlights_fr: "Lock-Off 2 Chambres · Akumal Punta Sur · Revente",
+    image: "", heroPhoto: "", photos: [],
+    description: "A two-bedroom lock-off unit at Tao Santamar in Akumal Punta Sur — a resale opportunity within one of the Riviera Maya's most distinctive wellness-focused resort communities.\n\nTao is a development concept built around a holistic lifestyle: yoga, meditation, cenotes, jungle trails, and a wellness spa are woven into the fabric of the community rather than treated as add-ons. Santamar is the oceanfront phase, which adds direct Caribbean Sea access to that already compelling package.\n\nThe lock-off configuration gives this unit exceptional flexibility — use the full two-bedroom layout for family or group stays, or lock off a bedroom to rent independently, maximizing rental income potential. Located between Playa del Carmen and Tulum, Akumal is a quietly prestigious address with world-class snorkeling right off the beach.",
+    description_es: "Una unidad lock-off de dos recámaras en Tao Santamar en Akumal Punta Sur — una oportunidad de reventa dentro de una de las comunidades resort más distintivas y enfocadas en el bienestar de la Riviera Maya.\n\nTao es un concepto de desarrollo construido alrededor de un estilo de vida holístico: yoga, meditación, cenotes, senderos en la jungla y un spa de bienestar están integrados en el tejido de la comunidad. Santamar es la fase frente al océano, que añade acceso directo al Mar Caribe.\n\nLa configuración lock-off le da a esta unidad una flexibilidad excepcional — usa la distribución completa de dos recámaras para estancias familiares o grupales, o cierra una recámara para rentarla de forma independiente, maximizando el potencial de ingresos por renta.",
+    description_fr: "Une unité lock-off de deux chambres à Tao Santamar à Akumal Punta Sur — une opportunité de revente au sein de l'une des communautés resort les plus distinctives axées sur le bien-être de la Riviera Maya.\n\nTao est un concept de développement construit autour d'un style de vie holistique: yoga, méditation, cenotes, sentiers en jungle et un spa de bien-être sont intégrés dans le tissu de la communauté. Santamar est la phase en bord de mer, qui ajoute un accès direct à la mer des Caraïbes.\n\nLa configuration lock-off donne à cette unité une flexibilité exceptionnelle — utilisez la disposition complète deux chambres pour des séjours familiaux ou en groupe, ou verrouillez une chambre pour la louer indépendamment.",
+    amenities: ["2-Bedroom Lock-Off", "Oceanfront Phase (Santamar)", "Wellness & Yoga Community", "Cenotes & Jungle Trails", "Spa & Meditation Areas", "Caribbean Sea Access", "Between PDC & Tulum", "World-Class Snorkeling Nearby", "Resale — Ready to Transfer"],
+    amenities_es: ["Lock-Off 2 Recámaras", "Fase Frente al Océano (Santamar)", "Comunidad de Bienestar y Yoga", "Cenotes y Senderos en la Jungla", "Spa y Áreas de Meditación", "Acceso al Mar Caribe", "Entre PDC y Tulum", "Snorkel de Clase Mundial Cercano", "Reventa — Lista para Transferir"],
+    amenities_fr: ["Lock-Off 2 Chambres", "Phase en Bord de Mer (Santamar)", "Communauté Bien-être & Yoga", "Cenotes et Sentiers Jungle", "Spa et Espaces Méditation", "Accès Mer des Caraïbes", "Entre PDC & Tulum", "Snorkeling de Classe Mondiale à Proximité", "Revente — Prête au Transfert"]
+  }
+];
+
+async function doRestore() {
+  const statusEl = document.getElementById('status');
+  const logEl = document.getElementById('log');
+  statusEl.className = 'status loading';
+  statusEl.innerHTML = '<strong>Restoring ' + LISTINGS.length + ' properties...</strong>';
+  logEl.innerHTML = '';
+
+  try {
+    const r = await fetch(BIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': BIN_KEY
+      },
+      body: JSON.stringify(LISTINGS)
+    });
+
+    if (!r.ok) {
+      throw new Error('HTTP ' + r.status);
+    }
+
+    const data = await r.json();
+    statusEl.className = 'status success';
+    statusEl.innerHTML = '<strong>✓ Success!</strong> ' + LISTINGS.length + ' properties restored to JSONBin.<br><br>' +
+      'Your website should now show all properties. <a href="https://www.exprealtymx.com">Check it now →</a><br><br>' +
+      '<strong>Next steps:</strong><ul>' +
+      '<li>Visit your admin page to upload photos for each property</li>' +
+      '<li>Update any prices marked as "Price on request"</li>' +
+      '<li>Review descriptions and adjust anything that needs updating</li>' +
+      '</ul>';
+
+    logEl.innerHTML = '<pre>' + LISTINGS.map(p => '✓ ' + p.title + ' (' + p.area + ')').join('\n') + '</pre>';
+  } catch(e) {
+    statusEl.className = 'status error';
+    statusEl.innerHTML = '<strong>Error:</strong> ' + e.message + '<br>Check your internet connection and try again.';
+    console.error(e);
+  }
+}
+</script>
+</body>
+</html>
