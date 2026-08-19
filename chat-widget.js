@@ -11,14 +11,9 @@
     fr: { title: 'Assistant Virtuel', placeholder: 'Écrivez votre question...', greeting: "Bonjour ! Je suis l'assistant d'At Home Realty. Comment puis-je vous aider ?", send: 'Envoyer', error: "Un problème est survenu. Réessayez ou contactez-nous sur WhatsApp." }
   };
 
-  // Detect language: checks <html lang="">, falls back to Spanish (site default)
-  function detectLang() {
-    const htmlLang = (document.documentElement.lang || '').slice(0, 2).toLowerCase();
-    if (STRINGS[htmlLang]) return htmlLang;
-    return 'es';
-  }
-  const lang = detectLang();
-  const t = STRINGS[lang];
+  // Language: defaults to Spanish (site default), visitor can override in the widget itself
+  let lang = 'es';
+  let t = STRINGS[lang];
 
   const css = `
     #ahr-chat-launcher {
@@ -52,6 +47,14 @@
       font-family: Georgia, 'Playfair Display', serif; font-size: 17px; letter-spacing: .01em;
     }
     #ahr-chat-header .sub { font-size: 11px; color: #A9C4DE; letter-spacing: .08em; text-transform: uppercase; margin-top: 2px; }
+    #ahr-chat-header-right { display: flex; align-items: center; gap: 10px; }
+    #ahr-chat-langs { display: flex; gap: 5px; }
+    #ahr-chat-langs button {
+      background: none; border: 1px solid #2B3F5C; color: #A9C4DE;
+      font-size: 10.5px; font-weight: 600; letter-spacing: .04em;
+      padding: 2px 6px; border-radius: 3px; cursor: pointer;
+    }
+    #ahr-chat-langs button.active { background: #C9A227; border-color: #C9A227; color: #0F1F35; }
     #ahr-chat-close { background: none; border: none; color: #D7E3F0; font-size: 20px; cursor: pointer; line-height: 1; padding: 4px; }
 
     #ahr-chat-messages {
@@ -101,7 +104,14 @@
         <div class="title">${t.title}</div>
         <div class="sub">At Home Realty</div>
       </div>
-      <button id="ahr-chat-close" aria-label="Close">&times;</button>
+      <div id="ahr-chat-header-right">
+        <div id="ahr-chat-langs">
+          <button data-lang="en">EN</button>
+          <button data-lang="es" class="active">ES</button>
+          <button data-lang="fr">FR</button>
+        </div>
+        <button id="ahr-chat-close" aria-label="Close">&times;</button>
+      </div>
     </div>
     <div id="ahr-chat-messages"></div>
     <div id="ahr-chat-inputrow">
@@ -111,10 +121,23 @@
   `;
   document.body.appendChild(panel);
 
-  const messagesEl = panel.querySelector('#ahr-chat-messages');
+  const titleEl = panel.querySelector('.title');
   const inputEl = panel.querySelector('#ahr-chat-input');
   const sendBtn = panel.querySelector('#ahr-chat-send');
   const closeBtn = panel.querySelector('#ahr-chat-close');
+  const langBtns = panel.querySelectorAll('#ahr-chat-langs button');
+  const messagesEl = panel.querySelector('#ahr-chat-messages');
+
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      lang = btn.dataset.lang;
+      t = STRINGS[lang];
+      langBtns.forEach(b => b.classList.toggle('active', b === btn));
+      titleEl.textContent = t.title;
+      inputEl.placeholder = t.placeholder;
+      sendBtn.textContent = t.send;
+    });
+  });
 
   let history = [];
   let opened = false;
