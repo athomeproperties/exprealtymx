@@ -136,11 +136,16 @@
       titleEl.textContent = t.title;
       inputEl.placeholder = t.placeholder;
       sendBtn.textContent = t.send;
+      // Only rewrite the greeting if the visitor hasn't actually sent a message yet
+      if (greetingEl && history.length === 0) {
+        greetingEl.textContent = t.greeting;
+      }
     });
   });
 
   let history = [];
   let opened = false;
+  let greetingEl = null;
 
   function addBubble(text, cls) {
     const div = document.createElement('div');
@@ -155,7 +160,7 @@
     panel.classList.toggle('open');
     if (!opened) {
       opened = true;
-      addBubble(t.greeting, 'bot');
+      greetingEl = addBubble(t.greeting, 'bot');
     }
   }
   launcher.addEventListener('click', toggle);
