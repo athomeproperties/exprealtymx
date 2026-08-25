@@ -41,10 +41,40 @@
   .waves{position:absolute; inset:0; overflow:hidden; opacity:0.5; pointer-events:none;}
   .waves svg{width:100%; position:absolute; bottom:-2px;}
 
+  /* ---------- LANGUAGE SWITCH ---------- */
+  .langbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(10,31,33,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .langbar-inner{
+    max-width:560px; margin:0 auto; padding:10px 24px;
+    display:flex; justify-content:flex-end; gap:6px;
+  }
+  .lang-btn{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.06em;
+    color:var(--seafoam);
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:100px;
+    padding:5px 12px;
+    cursor:pointer;
+    transition:background 0.2s ease, color 0.2s ease;
+  }
+  .lang-btn.active{
+    background:var(--brass-soft);
+    color:var(--ink);
+    border-color:var(--brass-soft);
+    font-weight:600;
+  }
+
   /* ---------- HERO ---------- */
   .hero{
     position:relative;
-    padding:72px 0 56px;
+    padding:56px 0 56px;
     background:
       radial-gradient(ellipse 120% 80% at 50% 0%, rgba(185,139,78,0.16), transparent 60%),
       var(--ink);
@@ -86,6 +116,19 @@
     color:var(--seafoam);
     max-width:38ch;
   }
+  .hero-map{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-top:14px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--brass-soft);
+    text-decoration:none;
+    border-bottom:1px solid var(--line);
+    padding-bottom:2px;
+  }
+  .hero-map:hover{color:var(--sand); border-color:var(--brass-soft);}
   .hero-meta{
     margin-top:32px;
     display:flex;
@@ -202,18 +245,7 @@
   .info-item:last-child{border-bottom:1px solid var(--line);}
   .info-item h3{font-family:var(--body); font-weight:600; font-size:15px; color:var(--sand); margin-bottom:6px;}
 
-  /* ---------- HOUSE RULES PLACEHOLDER ---------- */
-  .placeholder{
-    border:1px dashed rgba(185,139,78,0.5);
-    border-radius:10px;
-    padding:18px;
-    font-family:var(--mono);
-    font-size:12.5px;
-    color:var(--brass-soft);
-    line-height:1.7;
-  }
-
-  /* ---------- NEIGHBORHOOD LIST ---------- */
+  /* ---------- HOUSE RULES ---------- */
   .nb-group{margin-bottom:26px;}
   .nb-group:last-child{margin-bottom:0;}
   .nb-title{font-family:var(--mono); font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--brass-soft); margin-bottom:10px;}
@@ -337,6 +369,14 @@
 </head>
 <body>
 
+<div class="langbar">
+  <div class="langbar-inner">
+    <button class="lang-btn active" data-lang-btn="en">EN</button>
+    <button class="lang-btn" data-lang-btn="es">ES</button>
+    <button class="lang-btn" data-lang-btn="fr">FR</button>
+  </div>
+</div>
+
 <div class="hero">
   <div class="waves">
     <svg viewBox="0 0 600 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -345,13 +385,14 @@
     </svg>
   </div>
   <div class="wrap">
-    <div class="eyebrow">Guest Guidebook</div>
+    <div class="eyebrow" data-i18n="eyebrow">Guest Guidebook</div>
     <h1 class="property">Cruz con Mar<br><em>№ 410</em></h1>
-    <p class="hero-sub">A luxurious one-bedroom retreat steps from Mamitas Beach. Everything you need for your stay, in one place.</p>
+    <p class="hero-sub" data-i18n="heroSub">A luxurious one-bedroom retreat steps from Mamitas Beach. Everything you need for your stay, in one place.</p>
+    <a class="hero-map" href="https://www.google.com/maps/search/?api=1&query=Cruz+con+Mar+Playa+del+Carmen" target="_blank" rel="noopener" data-i18n="heroMapLink">📍 View property on Google Maps ↗</a>
     <div class="hero-meta">
-      <div><span>Check-in</span><b>10:00 AM</b></div>
-      <div><span>Check-out</span><b>3:00 PM</b></div>
-      <div><span>Unit</span><b>#410</b></div>
+      <div><span data-i18n="checkinLabel">Check-in</span><b>10:00 AM</b></div>
+      <div><span data-i18n="checkoutLabel">Check-out</span><b>3:00 PM</b></div>
+      <div><span data-i18n="unitLabel">Unit</span><b>#410</b></div>
     </div>
   </div>
 </div>
@@ -360,208 +401,208 @@
 
   <section class="reveal">
     <div class="section-head">
-      <div class="section-label">Your Hosts</div>
-      <h2>Karla &amp; Craig</h2>
+      <div class="section-label" data-i18n="hostsLabel">Your Hosts</div>
+      <h2 data-i18n="hostsTitle">Karla &amp; Craig</h2>
     </div>
-    <p>Karla is originally from Irapuato, Mexico, and has called Playa del Carmen home for the past 12 years. Craig is originally from Texas and has lived in Mexico for over 20 years. Together they run At Home Riviera Maya — we hope you love this place as much as we do, and we're just a message away if you need anything during your stay.</p>
+    <p data-i18n="hostsBody">Karla is originally from Irapuato, Mexico, and has called Playa del Carmen home for the past 12 years. Craig is originally from Texas and has lived in Mexico for over 20 years. Together they run At Home Riviera Maya — we hope you love this place as much as we do, and we're just a message away if you need anything during your stay.</p>
     <p style="margin-top:14px;"><a href="https://www.athomerivieramaya.com" target="_blank" rel="noopener" style="color:var(--brass-soft); font-weight:600; text-decoration:underline;">www.athomerivieramaya.com</a></p>
   </section>
 
   <section class="reveal">
     <div class="section-head">
-      <div class="section-label">01 — Getting In</div>
-      <h2>Your access code</h2>
+      <div class="section-label" data-i18n="s1Label">01 — Getting In</div>
+      <h2 data-i18n="s1Title">Your access code</h2>
     </div>
     <div class="keycard">
       <div class="kc-notch"></div>
       <div class="kc-row">
         <div>
-          <div class="kc-label">Entry Method</div>
-          <div class="kc-value">Digital Deadbolt</div>
+          <div class="kc-label" data-i18n="kcEntryMethod">Entry Method</div>
+          <div class="kc-value" data-i18n="kcEntryValue">Digital Deadbolt</div>
         </div>
         <div style="text-align:right;">
-          <div class="kc-label">Unit</div>
+          <div class="kc-label" data-i18n="kcUnit">Unit</div>
           <div class="kc-value">410</div>
         </div>
       </div>
       <div class="kc-divider"></div>
-      <div class="kc-note">
+      <div class="kc-note" data-i18n="kcNote">
         Your unique door code is sent through your <b>Airbnb messages</b> once the apartment is cleaned and ready for you — usually the morning of check-in. No code yet? Just message us on Airbnb.
       </div>
     </div>
-    <p style="margin-top:18px;">Check-in is any time after <b style="color:var(--sand)">10:00 AM</b>. Check-out is by <b style="color:var(--sand)">3:00 PM</b>. No need to meet anyone in person — let yourself in whenever you arrive.</p>
+    <p style="margin-top:18px;" data-i18n="s1Note">Check-in is any time after <b style="color:var(--sand)">10:00 AM</b>. Check-out is by <b style="color:var(--sand)">3:00 PM</b>. No need to meet anyone in person — let yourself in whenever you arrive.</p>
   </section>
 
   <section class="reveal">
     <div class="section-head">
-      <div class="section-label">02 — Parking</div>
-      <h2>Where to park</h2>
+      <div class="section-label" data-i18n="s2Label">02 — Parking</div>
+      <h2 data-i18n="s2Title">Where to park</h2>
     </div>
     <div class="info-item" style="border-top:none; padding-top:0;">
-      <h3>Reserved space — #410</h3>
-      <p>The building has a parking garage. Your unit's reserved space is marked <b style="color:var(--sand)">410</b> — just pull in and you're set.</p>
+      <h3 data-i18n="s2H3">Reserved space — #410</h3>
+      <p data-i18n="s2Body">The building has a parking garage. Your unit's reserved space is marked <b style="color:var(--sand)">410</b> — just pull in and you're set.</p>
     </div>
   </section>
 
   <section class="reveal">
     <div class="section-head">
-      <div class="section-label">03 — The Balcony Jacuzzi</div>
-      <h2>Getting it warm</h2>
+      <div class="section-label" data-i18n="s3Label">03 — The Balcony Jacuzzi</div>
+      <h2 data-i18n="s3Title">Getting it warm</h2>
     </div>
-    <p>The tub on your private balcony is jetted, like a jacuzzi bathtub — it's separate from the hot tubs on the rooftop pool deck. It doesn't heat on its own, but here's the trick to get it warm:</p>
+    <p data-i18n="s3Intro">The tub on your private balcony is jetted, like a jacuzzi bathtub — it's separate from the hot tubs on the rooftop pool deck. It doesn't heat on its own, but here's the trick to get it warm:</p>
     <ol class="steps">
-      <li><p>Turn on <b style="color:var(--brass-soft)">both</b> the hot and cold taps and fill the tub about <b style="color:var(--brass-soft)">3/4 of the way</b>.</p></li>
-      <li><p>Turn both taps <b style="color:var(--brass-soft)">off</b> and let it sit for <b style="color:var(--brass-soft)">15–20 minutes</b>.</p></li>
-      <li><p>Turn on <b style="color:var(--brass-soft)">only the hot water</b> and fill the rest of the way up.</p></li>
+      <li><p data-i18n="s3Step1">Turn on <b style="color:var(--brass-soft)">both</b> the hot and cold taps and fill the tub about <b style="color:var(--brass-soft)">3/4 of the way</b>.</p></li>
+      <li><p data-i18n="s3Step2">Turn both taps <b style="color:var(--brass-soft)">off</b> and let it sit for <b style="color:var(--brass-soft)">15–20 minutes</b>.</p></li>
+      <li><p data-i18n="s3Step3">Turn on <b style="color:var(--brass-soft)">only the hot water</b> and fill the rest of the way up.</p></li>
     </ol>
-    <div class="callout"><b>Good to know:</b> the hot tap closes clockwise like normal — but the cold tap closes counter-clockwise. Easy to miss, so if it's still running, try turning it the other way.</div>
+    <div class="callout" data-i18n="s3Callout"><b>Good to know:</b> the hot tap closes clockwise like normal — but the cold tap closes counter-clockwise. Easy to miss, so if it's still running, try turning it the other way.</div>
   </section>
 
   <section class="reveal">
     <div class="section-head">
-      <div class="section-label">04 — House Rules</div>
-      <h2>While you're here</h2>
+      <div class="section-label" data-i18n="s4Label">04 — House Rules</div>
+      <h2 data-i18n="s4Title">While you're here</h2>
     </div>
     <div class="nb-group">
-      <div class="nb-title">General</div>
+      <div class="nb-title" data-i18n="s4GeneralTitle">General</div>
       <ul class="nb-list">
-        <li>Quiet hours <span>10:00 PM – 9:00 AM</span></li>
-        <li>Amenities hours <span>9:00 AM – 10:00 PM</span></li>
-        <li>Nothing hung on the balcony railing <span></span></li>
-        <li>Trash bagged, in the parking-lot bins <span>not hallways</span></li>
-        <li>Pets are not permitted for guests <span>owners only</span></li>
+        <li><span data-i18n="s4G1">Quiet hours</span> <span data-i18n="s4G1v">10:00 PM – 9:00 AM</span></li>
+        <li><span data-i18n="s4G2">Amenities hours</span> <span data-i18n="s4G2v">9:00 AM – 10:00 PM</span></li>
+        <li><span data-i18n="s4G3">Nothing hung on the balcony railing</span> <span></span></li>
+        <li><span data-i18n="s4G4">Trash bagged, in the parking-lot bins</span> <span data-i18n="s4G4v">not hallways</span></li>
+        <li><span data-i18n="s4G5">Pets are not permitted for guests</span> <span data-i18n="s4G5v">owners only</span></li>
       </ul>
     </div>
     <div class="nb-group">
-      <div class="nb-title">Parking</div>
+      <div class="nb-title" data-i18n="s4ParkingTitle">Parking</div>
       <ul class="nb-list">
-        <li>Your reserved space is #410 <span>always available</span></li>
-        <li>Need a second space? <span>ask reception first</span></li>
+        <li><span data-i18n="s4P1">Your reserved space is #410</span> <span data-i18n="s4P1v">always available</span></li>
+        <li><span data-i18n="s4P2">Need a second space?</span> <span data-i18n="s4P2v">ask reception first</span></li>
       </ul>
     </div>
     <div class="nb-group">
-      <div class="nb-title">Rooftop &amp; pool</div>
+      <div class="nb-title" data-i18n="s4RoofTitle">Rooftop &amp; pool</div>
       <ul class="nb-list">
-        <li>Open 9:00 AM – 10:00 PM <span></span></li>
-        <li>No glass, ceramics, or pets <span></span></li>
-        <li>Smoking only in the bar area <span></span></li>
-        <li>Shower before entering the pool/jacuzzi <span>no lotions/sunscreen in water</span></li>
-        <li>No lifeguard on duty <span>swim at your own risk</span></li>
-        <li>Kids welcome, with an adult <span>swim diapers for little ones</span></li>
+        <li><span data-i18n="s4R1">Open 9:00 AM – 10:00 PM</span> <span></span></li>
+        <li><span data-i18n="s4R2">No glass, ceramics, or pets</span> <span></span></li>
+        <li><span data-i18n="s4R3">Smoking only in the bar area</span> <span></span></li>
+        <li><span data-i18n="s4R4">Shower before entering the pool/jacuzzi</span> <span data-i18n="s4R4v">no lotions/sunscreen in water</span></li>
+        <li><span data-i18n="s4R5">No lifeguard on duty</span> <span data-i18n="s4R5v">swim at your own risk</span></li>
+        <li><span data-i18n="s4R6">Kids welcome, with an adult</span> <span data-i18n="s4R6v">swim diapers for little ones</span></li>
       </ul>
     </div>
-    <p style="margin-top:18px; font-size:13px;">Full building regulations are posted at the front desk. Repeated violations can result in a $500 USD fine to the unit — let's keep things easy for everyone.</p>
+    <p style="margin-top:18px; font-size:13px;" data-i18n="s4Footer">Full building regulations are posted at the front desk. Repeated violations can result in a $500 USD fine to the unit — let's keep things easy for everyone.</p>
   </section>
 
   <section class="reveal">
     <div class="section-head">
-      <div class="section-label">05 — Nearby</div>
-      <h2>Eat, drink, explore</h2>
+      <div class="section-label" data-i18n="s5Label">05 — Nearby</div>
+      <h2 data-i18n="s5Title">Eat, drink, explore</h2>
     </div>
     <div class="nb-group">
-      <div class="nb-title">Restaurants &amp; bars</div>
+      <div class="nb-title" data-i18n="s5RestTitle">Restaurants &amp; bars</div>
 
       <div class="place">
         <div class="place-top">
           <div class="place-name">Chez Celine</div>
-          <div class="place-kind">French bakery</div>
+          <div class="place-kind" data-i18n="p1kind">French bakery</div>
         </div>
-        <div class="place-desc">A French bakery and bistro on 5th Ave — go for fresh croissants, quiches, and coffee in a garden courtyard setting. Great for breakfast or a relaxed lunch.</div>
-        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=Chez+Celine+Playa+del+Carmen" target="_blank" rel="noopener">View on Google Maps ↗</a>
+        <div class="place-desc" data-i18n="p1desc">A French bakery and bistro on 5th Ave — go for fresh croissants, quiches, and coffee in a garden courtyard setting. Great for breakfast or a relaxed lunch.</div>
+        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=Chez+Celine+Playa+del+Carmen" target="_blank" rel="noopener" data-i18n="mapLink">View on Google Maps ↗</a>
       </div>
 
       <div class="place">
         <div class="place-top">
           <div class="place-name">Yum Yum</div>
-          <div class="place-kind">Asian fusion</div>
+          <div class="place-kind" data-i18n="p2kind">Asian fusion</div>
         </div>
-        <div class="place-desc">A lively spot for Pan-Asian dishes — sushi, noodles, and creative fusion plates, with a fun cocktail menu to match.</div>
-        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=Yum+Yum+Playa+del+Carmen" target="_blank" rel="noopener">View on Google Maps ↗</a>
+        <div class="place-desc" data-i18n="p2desc">A lively spot for Pan-Asian dishes — sushi, noodles, and creative fusion plates, with a fun cocktail menu to match.</div>
+        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=Yum+Yum+Playa+del+Carmen" target="_blank" rel="noopener" data-i18n="mapLink">View on Google Maps ↗</a>
       </div>
 
       <div class="place">
         <div class="place-top">
           <div class="place-name">Bovinos</div>
-          <div class="place-kind">Steakhouse</div>
+          <div class="place-kind" data-i18n="p3kind">Steakhouse</div>
         </div>
-        <div class="place-desc">A classic steakhouse for a proper night out — grilled meats, seafood, and a solid wine list in a warm, upscale setting.</div>
-        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=Bovinos+Playa+del+Carmen" target="_blank" rel="noopener">View on Google Maps ↗</a>
+        <div class="place-desc" data-i18n="p3desc">A classic steakhouse for a proper night out — grilled meats, seafood, and a solid wine list in a warm, upscale setting.</div>
+        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=Bovinos+Playa+del+Carmen" target="_blank" rel="noopener" data-i18n="mapLink">View on Google Maps ↗</a>
       </div>
 
       <div class="place">
         <div class="place-top">
           <div class="place-name">Aguachile</div>
-          <div class="place-kind">Seafood</div>
+          <div class="place-kind" data-i18n="p4kind">Seafood</div>
         </div>
-        <div class="place-desc">Fresh, coastal Mexican seafood — ceviches, aguachiles, and ocean-forward plates. A great pick if you're craving something light and local.</div>
-        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=Aguachile+Playa+del+Carmen" target="_blank" rel="noopener">View on Google Maps ↗</a>
+        <div class="place-desc" data-i18n="p4desc">Fresh, coastal Mexican seafood — ceviches, aguachiles, and ocean-forward plates. A great pick if you're craving something light and local.</div>
+        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=Aguachile+Playa+del+Carmen" target="_blank" rel="noopener" data-i18n="mapLink">View on Google Maps ↗</a>
       </div>
 
       <div class="place">
         <div class="place-top">
           <div class="place-name">Bajo Cafe</div>
-          <div class="place-kind">Coffee</div>
+          <div class="place-kind" data-i18n="p5kind">Coffee</div>
         </div>
-        <div class="place-desc">A cozy neighborhood coffee shop — good for a slow morning coffee or a work-from-café afternoon.</div>
-        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=Bajo+Cafe+Playa+del+Carmen" target="_blank" rel="noopener">View on Google Maps ↗</a>
+        <div class="place-desc" data-i18n="p5desc">A cozy neighborhood coffee shop — good for a slow morning coffee or a work-from-café afternoon.</div>
+        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=Bajo+Cafe+Playa+del+Carmen" target="_blank" rel="noopener" data-i18n="mapLink">View on Google Maps ↗</a>
       </div>
 
       <div class="place">
         <div class="place-top">
           <div class="place-name">La Cueva del Chango</div>
-          <div class="place-kind">Breakfast &amp; brunch</div>
+          <div class="place-kind" data-i18n="p6kind">Breakfast &amp; brunch</div>
         </div>
-        <div class="place-desc">A jungle-garden setting tucked just off the main strip — beloved for hearty Mexican breakfasts, fresh juices, and a laid-back vibe.</div>
-        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=La+Cueva+del+Chango+Playa+del+Carmen" target="_blank" rel="noopener">View on Google Maps ↗</a>
+        <div class="place-desc" data-i18n="p6desc">A jungle-garden setting tucked just off the main strip — beloved for hearty Mexican breakfasts, fresh juices, and a laid-back vibe.</div>
+        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=La+Cueva+del+Chango+Playa+del+Carmen" target="_blank" rel="noopener" data-i18n="mapLink">View on Google Maps ↗</a>
       </div>
 
     </div>
     <div class="nb-group">
-      <div class="nb-title">Groceries</div>
+      <div class="nb-title" data-i18n="s5GrocTitle">Groceries</div>
       <div class="place">
         <div class="place-top">
           <div class="place-name">Chedraui Select</div>
-          <div class="place-kind">Grocery store</div>
+          <div class="place-kind" data-i18n="p7kind">Grocery store</div>
         </div>
-        <div class="place-desc">A well-stocked supermarket on 10th Ave, between Streets 34 and 38 — good for groceries, snacks, and anything you need for the kitchen.</div>
-        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=Chedraui+Select+10a+Avenida+Playa+del+Carmen" target="_blank" rel="noopener">View on Google Maps ↗</a>
+        <div class="place-desc" data-i18n="p7desc">A well-stocked supermarket on 10th Ave, between Streets 34 and 38 — good for groceries, snacks, and anything you need for the kitchen.</div>
+        <a class="place-map" href="https://www.google.com/maps/search/?api=1&query=Chedraui+Select+10a+Avenida+Playa+del+Carmen" target="_blank" rel="noopener" data-i18n="mapLink">View on Google Maps ↗</a>
       </div>
     </div>
   </section>
 
   <section class="reveal">
     <div class="section-head">
-      <div class="section-label">06 — Need Anything?</div>
-      <h2>Reach us</h2>
+      <div class="section-label" data-i18n="s6Label">06 — Need Anything?</div>
+      <h2 data-i18n="s6Title">Reach us</h2>
     </div>
     <div class="contact-row">
       <div>
-        <div class="who">Airbnb Message</div>
-        <div class="how">Fastest way to reach us</div>
+        <div class="who" data-i18n="s6Who1">Airbnb Message</div>
+        <div class="how" data-i18n="s6How1">Fastest way to reach us</div>
       </div>
     </div>
     <div class="contact-row">
       <div>
         <div class="who">Craig (WhatsApp)</div>
-        <div class="how">+52 984 213 6512 — if Airbnb isn't working</div>
+        <div class="how" data-i18n="s6How2">+52 984 213 6512 — if Airbnb isn't working</div>
       </div>
-      <a class="btn" href="https://wa.me/529842136512" target="_blank" rel="noopener">Message</a>
+      <a class="btn" href="https://wa.me/529842136512" target="_blank" rel="noopener" data-i18n="s6Btn">Message</a>
     </div>
   </section>
 
   <section class="reveal" style="border-bottom:none; padding-bottom:0;">
     <div class="re-panel">
-      <div class="section-label">Before You Go</div>
-      <h2>Thinking about owning<br>a place like this?</h2>
-      <p>A lot of our guests fall in love with Playa del Carmen and start wondering what it would take to own here. If that's ever on your mind — now, or years from now — I'm a licensed real estate agent and happy to talk. No pressure, just a conversation.</p>
+      <div class="section-label" data-i18n="reLabel">Before You Go</div>
+      <h2 data-i18n="reTitle">Thinking about owning<br>a place like this?</h2>
+      <p data-i18n="reBody">A lot of our guests fall in love with Playa del Carmen and start wondering what it would take to own here. If that's ever on your mind — now, or years from now — I'm a licensed real estate agent and happy to talk. No pressure, just a conversation.</p>
       <div class="re-brands">
         <span>At Home Realty</span>
         <div class="divider"></div>
-        <span>Powered by eXp Realty</span>
+        <span data-i18n="rePoweredBy">Powered by eXp Realty</span>
       </div>
       <div class="re-cta">
-        <a class="primary" href="https://exprealtymx.com" target="_blank" rel="noopener">Visit exprealtymx.com</a>
-        <a class="secondary" href="https://wa.me/529842136512" target="_blank" rel="noopener">WhatsApp Craig</a>
+        <a class="primary" href="https://exprealtymx.com" target="_blank" rel="noopener" data-i18n="reCta1">Visit exprealtymx.com</a>
+        <a class="secondary" href="https://wa.me/529842136512" target="_blank" rel="noopener" data-i18n="reCta2">WhatsApp Craig</a>
       </div>
     </div>
   </section>
@@ -571,6 +612,209 @@
 <footer>Cruz con Mar #410 · At Home Riviera Maya</footer>
 
 <script>
+  const translations = {
+    en: {
+      eyebrow: "Guest Guidebook",
+      heroSub: "A luxurious one-bedroom retreat steps from Mamitas Beach. Everything you need for your stay, in one place.",
+      heroMapLink: "📍 View property on Google Maps ↗",
+      checkinLabel: "Check-in", checkoutLabel: "Check-out", unitLabel: "Unit",
+      hostsLabel: "Your Hosts", hostsTitle: "Karla &amp; Craig",
+      hostsBody: "Karla is originally from Irapuato, Mexico, and has called Playa del Carmen home for the past 12 years. Craig is originally from Texas and has lived in Mexico for over 20 years. Together they run At Home Riviera Maya — we hope you love this place as much as we do, and we're just a message away if you need anything during your stay.",
+      s1Label: "01 — Getting In", s1Title: "Your access code",
+      kcEntryMethod: "Entry Method", kcEntryValue: "Digital Deadbolt", kcUnit: "Unit",
+      kcNote: "Your unique door code is sent through your <b>Airbnb messages</b> once the apartment is cleaned and ready for you — usually the morning of check-in. No code yet? Just message us on Airbnb.",
+      s1Note: "Check-in is any time after <b style=\"color:var(--sand)\">10:00 AM</b>. Check-out is by <b style=\"color:var(--sand)\">3:00 PM</b>. No need to meet anyone in person — let yourself in whenever you arrive.",
+      s2Label: "02 — Parking", s2Title: "Where to park",
+      s2H3: "Reserved space — #410",
+      s2Body: "The building has a parking garage. Your unit's reserved space is marked <b style=\"color:var(--sand)\">410</b> — just pull in and you're set.",
+      s3Label: "03 — The Balcony Jacuzzi", s3Title: "Getting it warm",
+      s3Intro: "The tub on your private balcony is jetted, like a jacuzzi bathtub — it's separate from the hot tubs on the rooftop pool deck. It doesn't heat on its own, but here's the trick to get it warm:",
+      s3Step1: "Turn on <b style=\"color:var(--brass-soft)\">both</b> the hot and cold taps and fill the tub about <b style=\"color:var(--brass-soft)\">3/4 of the way</b>.",
+      s3Step2: "Turn both taps <b style=\"color:var(--brass-soft)\">off</b> and let it sit for <b style=\"color:var(--brass-soft)\">15–20 minutes</b>.",
+      s3Step3: "Turn on <b style=\"color:var(--brass-soft)\">only the hot water</b> and fill the rest of the way up.",
+      s3Callout: "<b>Good to know:</b> the hot tap closes clockwise like normal — but the cold tap closes counter-clockwise. Easy to miss, so if it's still running, try turning it the other way.",
+      s4Label: "04 — House Rules", s4Title: "While you're here",
+      s4GeneralTitle: "General",
+      s4G1: "Quiet hours", s4G1v: "10:00 PM – 9:00 AM",
+      s4G2: "Amenities hours", s4G2v: "9:00 AM – 10:00 PM",
+      s4G3: "Nothing hung on the balcony railing",
+      s4G4: "Trash bagged, in the parking-lot bins", s4G4v: "not hallways",
+      s4G5: "Pets are not permitted for guests", s4G5v: "owners only",
+      s4ParkingTitle: "Parking",
+      s4P1: "Your reserved space is #410", s4P1v: "always available",
+      s4P2: "Need a second space?", s4P2v: "ask reception first",
+      s4RoofTitle: "Rooftop &amp; pool",
+      s4R1: "Open 9:00 AM – 10:00 PM",
+      s4R2: "No glass, ceramics, or pets",
+      s4R3: "Smoking only in the bar area",
+      s4R4: "Shower before entering the pool/jacuzzi", s4R4v: "no lotions/sunscreen in water",
+      s4R5: "No lifeguard on duty", s4R5v: "swim at your own risk",
+      s4R6: "Kids welcome, with an adult", s4R6v: "swim diapers for little ones",
+      s4Footer: "Full building regulations are posted at the front desk. Repeated violations can result in a $500 USD fine to the unit — let's keep things easy for everyone.",
+      s5Label: "05 — Nearby", s5Title: "Eat, drink, explore",
+      s5RestTitle: "Restaurants &amp; bars",
+      p1kind: "French bakery", p1desc: "A French bakery and bistro on 5th Ave — go for fresh croissants, quiches, and coffee in a garden courtyard setting. Great for breakfast or a relaxed lunch.",
+      p2kind: "Asian fusion", p2desc: "A lively spot for Pan-Asian dishes — sushi, noodles, and creative fusion plates, with a fun cocktail menu to match.",
+      p3kind: "Steakhouse", p3desc: "A classic steakhouse for a proper night out — grilled meats, seafood, and a solid wine list in a warm, upscale setting.",
+      p4kind: "Seafood", p4desc: "Fresh, coastal Mexican seafood — ceviches, aguachiles, and ocean-forward plates. A great pick if you're craving something light and local.",
+      p5kind: "Coffee", p5desc: "A cozy neighborhood coffee shop — good for a slow morning coffee or a work-from-café afternoon.",
+      p6kind: "Breakfast &amp; brunch", p6desc: "A jungle-garden setting tucked just off the main strip — beloved for hearty Mexican breakfasts, fresh juices, and a laid-back vibe.",
+      p7kind: "Grocery store", p7desc: "A well-stocked supermarket on 10th Ave, between Streets 34 and 38 — good for groceries, snacks, and anything you need for the kitchen.",
+      mapLink: "View on Google Maps ↗",
+      s5GrocTitle: "Groceries",
+      s6Label: "06 — Need Anything?", s6Title: "Reach us",
+      s6Who1: "Airbnb Message", s6How1: "Fastest way to reach us",
+      s6How2: "+52 984 213 6512 — if Airbnb isn't working",
+      s6Btn: "Message",
+      reLabel: "Before You Go", reTitle: "Thinking about owning<br>a place like this?",
+      reBody: "A lot of our guests fall in love with Playa del Carmen and start wondering what it would take to own here. If that's ever on your mind — now, or years from now — I'm a licensed real estate agent and happy to talk. No pressure, just a conversation.",
+      rePoweredBy: "Powered by eXp Realty",
+      reCta1: "Visit exprealtymx.com", reCta2: "WhatsApp Craig"
+    },
+    es: {
+      eyebrow: "Guía del Huésped",
+      heroSub: "Un lujoso departamento de una recámara a pasos de Mamitas Beach. Todo lo que necesitas para tu estancia, en un solo lugar.",
+      heroMapLink: "📍 Ver propiedad en Google Maps ↗",
+      checkinLabel: "Check-in", checkoutLabel: "Check-out", unitLabel: "Unidad",
+      hostsLabel: "Tus Anfitriones", hostsTitle: "Karla &amp; Craig",
+      hostsBody: "Karla es originaria de Irapuato, México, y ha vivido en Playa del Carmen los últimos 12 años. Craig es originario de Texas y ha vivido en México por más de 20 años. Juntos dirigen At Home Riviera Maya — esperamos que disfrutes este lugar tanto como nosotros, y estamos a un mensaje de distancia si necesitas algo durante tu estancia.",
+      s1Label: "01 — Acceso", s1Title: "Tu código de acceso",
+      kcEntryMethod: "Método de Entrada", kcEntryValue: "Cerradura Digital", kcUnit: "Unidad",
+      kcNote: "Tu código único de la puerta se envía por tus <b>mensajes de Airbnb</b> una vez que el departamento está limpio y listo — normalmente la mañana de tu check-in. ¿Aún no tienes el código? Solo escríbenos por Airbnb.",
+      s1Note: "El check-in es a partir de las <b style=\"color:var(--sand)\">10:00 AM</b>. El check-out es antes de las <b style=\"color:var(--sand)\">3:00 PM</b>. No es necesario reunirte con nadie en persona — entra tú mismo cuando llegues.",
+      s2Label: "02 — Estacionamiento", s2Title: "Dónde estacionarte",
+      s2H3: "Espacio reservado — #410",
+      s2Body: "El edificio cuenta con estacionamiento. El espacio reservado de tu unidad está marcado con el número <b style=\"color:var(--sand)\">410</b> — solo entra y listo.",
+      s3Label: "03 — El Jacuzzi del Balcón", s3Title: "Cómo calentarlo",
+      s3Intro: "La tina de tu balcón privado tiene jets, como una tina jacuzzi — es independiente de los jacuzzis del rooftop. No se calienta sola, pero aquí está el truco para calentarla:",
+      s3Step1: "Abre <b style=\"color:var(--brass-soft)\">ambas</b> llaves, caliente y fría, y llena la tina hasta <b style=\"color:var(--brass-soft)\">3/4 partes</b>.",
+      s3Step2: "Cierra ambas llaves y déjala reposar de <b style=\"color:var(--brass-soft)\">15 a 20 minutos</b>.",
+      s3Step3: "Abre <b style=\"color:var(--brass-soft)\">solo la llave caliente</b> y termina de llenarla.",
+      s3Callout: "<b>Dato importante:</b> la llave caliente cierra hacia la derecha como es normal — pero la llave fría cierra hacia la izquierda. Es fácil pasarlo por alto, así que si sigue corriendo agua, intenta girarla al otro lado.",
+      s4Label: "04 — Reglamento", s4Title: "Durante tu estancia",
+      s4GeneralTitle: "General",
+      s4G1: "Horario de silencio", s4G1v: "10:00 PM – 9:00 AM",
+      s4G2: "Horario de amenidades", s4G2v: "9:00 AM – 10:00 PM",
+      s4G3: "No colgar nada del barandal del balcón",
+      s4G4: "Basura en bolsas, en los contenedores del estacionamiento", s4G4v: "no en los pasillos",
+      s4G5: "No se permiten mascotas para huéspedes", s4G5v: "solo propietarios",
+      s4ParkingTitle: "Estacionamiento",
+      s4P1: "Tu espacio reservado es el #410", s4P1v: "siempre disponible",
+      s4P2: "¿Necesitas un segundo espacio?", s4P2v: "consulta primero con recepción",
+      s4RoofTitle: "Rooftop y alberca",
+      s4R1: "Abierto de 9:00 AM a 10:00 PM",
+      s4R2: "No se permite vidrio, cerámica ni mascotas",
+      s4R3: "Solo se permite fumar en la zona del bar",
+      s4R4: "Ducharse antes de entrar a la alberca/jacuzzi", s4R4v: "sin lociones/bloqueador en el agua",
+      s4R5: "No hay salvavidas de servicio", s4R5v: "uso bajo tu propia responsabilidad",
+      s4R6: "Niños bienvenidos, acompañados de un adulto", s4R6v: "pañal de natación para los más pequeños",
+      s4Footer: "El reglamento completo del edificio está publicado en recepción. Violaciones repetidas pueden resultar en una multa de $500 USD a la unidad — mantengamos todo sencillo para todos.",
+      s5Label: "05 — Alrededores", s5Title: "Come, bebe, explora",
+      s5RestTitle: "Restaurantes y bares",
+      p1kind: "Panadería francesa", p1desc: "Una panadería y bistró francés en la 5ta Avenida — ideal por sus croissants recién horneados, quiches y café en un patio jardín. Perfecto para desayunar o una comida relajada.",
+      p2kind: "Fusión asiática", p2desc: "Un lugar animado con platillos panasiáticos — sushi, fideos y creaciones de fusión, con una carta de cocteles divertida.",
+      p3kind: "Steakhouse", p3desc: "Un steakhouse clásico para una noche especial — carnes a la parrilla, mariscos y una buena carta de vinos en un ambiente cálido y elegante.",
+      p4kind: "Mariscos", p4desc: "Mariscos frescos de estilo costero mexicano — ceviches, aguachiles y platillos con sabor a mar. Excelente opción si buscas algo ligero y local.",
+      p5kind: "Café", p5desc: "Una cafetería de barrio muy acogedora — perfecta para un café tranquilo por la mañana o una tarde de trabajo remoto.",
+      p6kind: "Desayunos y brunch", p6desc: "Un entorno de jardín tipo selva, justo fuera de la avenida principal — famoso por sus desayunos mexicanos abundantes, jugos frescos y ambiente relajado.",
+      p7kind: "Supermercado", p7desc: "Un supermercado bien surtido en la 10a Avenida, entre las calles 34 y 38 — ideal para víveres, snacks y todo lo que necesites para la cocina.",
+      mapLink: "Ver en Google Maps ↗",
+      s5GrocTitle: "Supermercado",
+      s6Label: "06 — ¿Necesitas Algo?", s6Title: "Contáctanos",
+      s6Who1: "Mensaje por Airbnb", s6How1: "La forma más rápida de contactarnos",
+      s6How2: "+52 984 213 6512 — si Airbnb no funciona",
+      s6Btn: "Enviar mensaje",
+      reLabel: "Antes de Irte", reTitle: "¿Pensando en comprar<br>un lugar como este?",
+      reBody: "Muchos de nuestros huéspedes se enamoran de Playa del Carmen y comienzan a preguntarse qué se necesita para tener una propiedad aquí. Si alguna vez lo has pensado — ahora, o en unos años — soy agente inmobiliario certificado y con gusto platicamos. Sin presión, solo una conversación.",
+      rePoweredBy: "Con el respaldo de eXp Realty",
+      reCta1: "Visita exprealtymx.com", reCta2: "WhatsApp a Craig"
+    },
+    fr: {
+      eyebrow: "Guide de l'Hôte",
+      heroSub: "Un luxueux appartement d'une chambre à quelques pas de la plage Mamitas. Tout ce dont vous avez besoin pour votre séjour, au même endroit.",
+      heroMapLink: "📍 Voir la propriété sur Google Maps ↗",
+      checkinLabel: "Arrivée", checkoutLabel: "Départ", unitLabel: "Unité",
+      hostsLabel: "Vos Hôtes", hostsTitle: "Karla &amp; Craig",
+      hostsBody: "Karla est originaire d'Irapuato, au Mexique, et vit à Playa del Carmen depuis 12 ans. Craig est originaire du Texas et vit au Mexique depuis plus de 20 ans. Ensemble, ils dirigent At Home Riviera Maya — nous espérons que vous aimerez cet endroit autant que nous, et nous sommes à un message si vous avez besoin de quoi que ce soit pendant votre séjour.",
+      s1Label: "01 — Accès", s1Title: "Votre code d'accès",
+      kcEntryMethod: "Méthode d'Entrée", kcEntryValue: "Serrure Numérique", kcUnit: "Unité",
+      kcNote: "Votre code de porte unique est envoyé via vos <b>messages Airbnb</b> une fois l'appartement nettoyé et prêt — généralement le matin de votre arrivée. Pas encore de code ? Écrivez-nous simplement sur Airbnb.",
+      s1Note: "L'arrivée se fait à partir de <b style=\"color:var(--sand)\">10h00</b>. Le départ est avant <b style=\"color:var(--sand)\">15h00</b>. Pas besoin de rencontrer qui que ce soit en personne — entrez par vous-même à votre arrivée.",
+      s2Label: "02 — Stationnement", s2Title: "Où se garer",
+      s2H3: "Place réservée — #410",
+      s2Body: "L'immeuble dispose d'un parking. La place réservée de votre unité est marquée <b style=\"color:var(--sand)\">410</b> — garez-vous, c'est tout.",
+      s3Label: "03 — Le Jacuzzi du Balcon", s3Title: "Comment le réchauffer",
+      s3Intro: "La baignoire de votre balcon privé est à jets, comme une baignoire jacuzzi — elle est indépendante des jacuzzis du rooftop. Elle ne chauffe pas toute seule, mais voici l'astuce pour la réchauffer :",
+      s3Step1: "Ouvrez <b style=\"color:var(--brass-soft)\">les deux</b> robinets, chaud et froid, et remplissez la baignoire aux <b style=\"color:var(--brass-soft)\">3/4</b>.",
+      s3Step2: "Fermez les deux robinets et laissez reposer <b style=\"color:var(--brass-soft)\">15 à 20 minutes</b>.",
+      s3Step3: "Ouvrez <b style=\"color:var(--brass-soft)\">uniquement l'eau chaude</b> et terminez de remplir.",
+      s3Callout: "<b>Bon à savoir :</b> le robinet d'eau chaude se ferme dans le sens horaire, comme d'habitude — mais le robinet d'eau froide se ferme dans le sens antihoraire. Facile à manquer, donc si l'eau coule encore, essayez de tourner dans l'autre sens.",
+      s4Label: "04 — Règlement Intérieur", s4Title: "Pendant votre séjour",
+      s4GeneralTitle: "Général",
+      s4G1: "Heures de silence", s4G1v: "22h00 – 9h00",
+      s4G2: "Heures des équipements", s4G2v: "9h00 – 22h00",
+      s4G3: "Rien ne doit être suspendu à la rambarde du balcon",
+      s4G4: "Déchets en sacs, dans les bacs du parking", s4G4v: "pas dans les couloirs",
+      s4G5: "Animaux non autorisés pour les invités", s4G5v: "propriétaires uniquement",
+      s4ParkingTitle: "Stationnement",
+      s4P1: "Votre place réservée est la #410", s4P1v: "toujours disponible",
+      s4P2: "Besoin d'une deuxième place ?", s4P2v: "demandez d'abord à la réception",
+      s4RoofTitle: "Rooftop et piscine",
+      s4R1: "Ouvert de 9h00 à 22h00",
+      s4R2: "Pas de verre, céramique ni animaux",
+      s4R3: "Fumer autorisé uniquement dans la zone du bar",
+      s4R4: "Douche obligatoire avant la piscine/jacuzzi", s4R4v: "pas de lotion/crème solaire dans l'eau",
+      s4R5: "Pas de maître-nageur", s4R5v: "baignade à vos risques",
+      s4R6: "Enfants bienvenus, accompagnés d'un adulte", s4R6v: "couches de bain pour les petits",
+      s4Footer: "Le règlement complet de l'immeuble est affiché à la réception. Des infractions répétées peuvent entraîner une amende de 500 USD pour l'unité — gardons les choses simples pour tout le monde.",
+      s5Label: "05 — À Proximité", s5Title: "Manger, boire, explorer",
+      s5RestTitle: "Restaurants et bars",
+      p1kind: "Boulangerie française", p1desc: "Une boulangerie-bistrot française sur la 5ème Avenue — pour de bons croissants, quiches et café dans un cadre de jardin. Idéal pour le petit-déjeuner ou un déjeuner tranquille.",
+      p2kind: "Fusion asiatique", p2desc: "Un endroit animé pour des plats pan-asiatiques — sushis, nouilles et créations fusion, avec une carte de cocktails sympa.",
+      p3kind: "Steakhouse", p3desc: "Un steakhouse classique pour une belle soirée — viandes grillées, fruits de mer et une bonne carte des vins dans un cadre chaleureux et élégant.",
+      p4kind: "Fruits de mer", p4desc: "Des fruits de mer frais façon côte mexicaine — ceviches, aguachiles et plats tournés vers l'océan. Un excellent choix pour quelque chose de léger et local.",
+      p5kind: "Café", p5desc: "Un café de quartier chaleureux — parfait pour un café tranquille le matin ou pour travailler l'après-midi.",
+      p6kind: "Petit-déjeuner et brunch", p6desc: "Un cadre de jardin tropical juste à l'écart de l'avenue principale — réputé pour ses copieux petits-déjeuners mexicains, jus frais et ambiance décontractée.",
+      p7kind: "Épicerie", p7desc: "Un supermarché bien approvisionné sur la 10ème Avenue, entre les rues 34 et 38 — pratique pour les courses, les snacks et tout ce qu'il faut pour la cuisine.",
+      mapLink: "Voir sur Google Maps ↗",
+      s5GrocTitle: "Épicerie",
+      s6Label: "06 — Besoin d'Aide ?", s6Title: "Nous contacter",
+      s6Who1: "Message Airbnb", s6How1: "Le moyen le plus rapide de nous joindre",
+      s6How2: "+52 984 213 6512 — si Airbnb ne fonctionne pas",
+      s6Btn: "Envoyer un message",
+      reLabel: "Avant de Partir", reTitle: "Vous pensez acheter<br>un endroit comme celui-ci ?",
+      reBody: "Beaucoup de nos invités tombent amoureux de Playa del Carmen et commencent à se demander ce qu'il faudrait pour devenir propriétaire ici. Si l'idée vous traverse l'esprit — maintenant, ou dans quelques années — je suis agent immobilier agréé et je serai heureux d'en discuter. Sans pression, juste une conversation.",
+      rePoweredBy: "Avec le soutien d'eXp Realty",
+      reCta1: "Visitez exprealtymx.com", reCta2: "WhatsApp Craig"
+    }
+  };
+
+  function applyLang(lang){
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      const dict = translations[lang] || translations.en;
+      if(dict[key] !== undefined){
+        el.innerHTML = dict[key];
+      }
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn=>{
+      btn.classList.toggle('active', btn.getAttribute('data-lang-btn') === lang);
+    });
+    document.documentElement.setAttribute('lang', lang);
+    try{ localStorage.setItem('ccm410-lang', lang); }catch(e){}
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> applyLang(btn.getAttribute('data-lang-btn')));
+  });
+
+  let initialLang = 'en';
+  try{
+    const saved = localStorage.getItem('ccm410-lang');
+    if(saved && translations[saved]) initialLang = saved;
+  }catch(e){}
+  applyLang(initialLang);
+
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); } });
   }, {threshold:0.1});
