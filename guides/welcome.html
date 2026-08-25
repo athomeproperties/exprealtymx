@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>At Home Riviera Maya — Real Estate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F2B2E;
+    --ink-deep:#0A1F21;
+    --sand:#F6EFE3;
+    --brass:#B98B4E;
+    --brass-soft:#D8B37C;
+    --coral:#E4674B;
+    --seafoam:#A9C7C2;
+    --line: rgba(185,139,78,0.35);
+    --display: 'Fraunces', serif;
+    --body: 'Inter', -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(circle at 8% 12%, rgba(185,139,78,0.14), transparent 38%),
+      radial-gradient(circle at 92% 18%, rgba(169,199,194,0.10), transparent 38%),
+      radial-gradient(circle at 12% 88%, rgba(185,139,78,0.12), transparent 38%),
+      radial-gradient(circle at 90% 92%, rgba(169,199,194,0.09), transparent 38%),
+      repeating-linear-gradient(135deg, rgba(185,139,78,0.05) 0px, rgba(185,139,78,0.05) 1px, transparent 1px, transparent 46px),
+      var(--ink);
+    color:var(--sand);
+    font-family:var(--body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  .wrap{max-width:640px; margin:0 auto; padding:0 32px; width:100%;}
+
+  .langbar{
+    padding:16px 0;
+    display:flex;
+    justify-content:flex-end;
+  }
+  .lang-btn{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.06em;
+    color:var(--seafoam);
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:100px;
+    padding:5px 12px;
+    cursor:pointer;
+    margin-left:6px;
+  }
+  .lang-btn.active{
+    background:var(--brass-soft);
+    color:var(--ink);
+    border-color:var(--brass-soft);
+    font-weight:600;
+  }
+
+  main{flex:1; display:flex; align-items:center;}
+
+  .hero{
+    padding:24px 0 48px;
+    text-align:center;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--brass-soft);
+  }
+  h1{
+    font-family:var(--display);
+    font-weight:500;
+    font-size:34px;
+    line-height:1.15;
+    letter-spacing:-0.01em;
+    margin-top:14px;
+    color:var(--sand);
+  }
+  .sub{
+    margin-top:14px;
+    font-size:15px;
+    color:var(--seafoam);
+    max-width:36ch;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  .cta-primary{
+    display:block;
+    margin-top:32px;
+    background:var(--coral);
+    color:var(--sand);
+    font-family:var(--body);
+    font-weight:600;
+    font-size:15.5px;
+    text-align:center;
+    padding:15px 20px;
+    border-radius:100px;
+    text-decoration:none;
+  }
+
+  .divider-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:32px 0;
+  }
+  .divider-row .line{flex:1; height:1px; background:var(--line);}
+  .divider-row span{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--seafoam);
+  }
+
+  .newsletter-card{
+    background:var(--sand);
+    color:var(--ink);
+    border-radius:16px;
+    padding:26px 24px;
+    text-align:left;
+  }
+  .newsletter-card h2{
+    font-family:var(--display);
+    font-weight:500;
+    font-size:20px;
+    color:var(--ink);
+  }
+  .newsletter-card p{
+    margin-top:8px;
+    font-size:13.5px;
+    color:#5B5140;
+  }
+  .newsletter-form{
+    margin-top:18px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .newsletter-form input[type="email"]{
+    font-family:var(--body);
+    font-size:15px;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1px solid #C9BCA0;
+    background:#fff;
+    color:var(--ink);
+  }
+  .newsletter-form input[type="email"]:focus{
+    outline:2px solid var(--brass);
+    outline-offset:1px;
+  }
+  .newsletter-form button{
+    font-family:var(--body);
+    font-weight:600;
+    font-size:14.5px;
+    color:var(--sand);
+    background:var(--ink);
+    border:none;
+    padding:12px 16px;
+    border-radius:10px;
+    cursor:pointer;
+  }
+  .newsletter-form button:hover{background:var(--ink-deep);}
+  .form-note{
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:#8A7658;
+    margin-top:8px;
+  }
+  .success-msg{
+    display:none;
+    font-size:14px;
+    color:#2E5E3E;
+    font-weight:600;
+    margin-top:14px;
+  }
+  .success-msg.visible{display:block;}
+
+  footer{
+    padding:24px 0 32px;
+    text-align:center;
+    font-family:var(--mono);
+    font-size:11px;
+    color:rgba(169,199,194,0.55);
+    letter-spacing:0.06em;
+  }
+
+  /* ---------- DESKTOP FRAMING RAILS ---------- */
+  .rail{
+    position:fixed;
+    top:0; bottom:0;
+    width:1px;
+    background:linear-gradient(to bottom, transparent, rgba(185,139,78,0.4) 10%, rgba(185,139,78,0.4) 90%, transparent);
+    pointer-events:none;
+    display:none;
+    z-index:1;
+  }
+  @media (min-width:900px){
+    .rail{display:block;}
+    .rail-left{left:calc(50% - 352px);}
+    .rail-right{right:calc(50% - 352px);}
+  }
+</style>
+</head>
+<body>
+<div class="rail rail-left"></div>
+<div class="rail rail-right"></div>
+
+<div class="wrap">
+  <div class="langbar">
+    <button class="lang-btn active" data-lang-btn="en">EN</button>
+    <button class="lang-btn" data-lang-btn="es">ES</button>
+    <button class="lang-btn" data-lang-btn="fr">FR</button>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <div class="eyebrow" data-i18n="eyebrow">At Home Realty · eXp Realty</div>
+      <h1 data-i18n="headline">Thinking about owning in Playa del Carmen?</h1>
+      <p class="sub" data-i18n="sub">Browse current listings, or leave your email to get the monthly newsletter on the Riviera Maya market — new listings, buyer tips, and neighborhood guides.</p>
+
+      <a class="cta-primary" href="https://exprealtymx.com" target="_blank" rel="noopener" data-i18n="ctaBrowse">Browse Listings →</a>
+
+      <div class="divider-row">
+        <div class="line"></div>
+        <span data-i18n="orLabel">or</span>
+        <div class="line"></div>
+      </div>
+
+      <div class="newsletter-card">
+        <h2 data-i18n="nlTitle">Get the newsletter</h2>
+        <p data-i18n="nlBody">No spam — just useful updates on the Riviera Maya market, once or twice a month.</p>
+        <form class="newsletter-form" id="newsletter-form" action="https://formspree.io/f/xjybnejy" method="POST">
+          <input type="email" name="email" placeholder="you@email.com" data-i18n-placeholder="nlPlaceholder" required>
+          <button type="submit" data-i18n="nlSubmit">Sign me up</button>
+        </form>
+        <div class="success-msg" id="success-msg" data-i18n="nlSuccess">Thanks! You're on the list.</div>
+        <div class="form-note" data-i18n="nlNote">We'll never share your email.</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>At Home Riviera Maya</footer>
+
+<script>
+  const translations = {
+    en: {
+      eyebrow: "At Home Realty · eXp Realty",
+      headline: "Thinking about owning in Playa del Carmen?",
+      sub: "Browse current listings, or leave your email to get the monthly newsletter on the Riviera Maya market — new listings, buyer tips, and neighborhood guides.",
+      ctaBrowse: "Browse Listings →",
+      orLabel: "or",
+      nlTitle: "Get the newsletter",
+      nlBody: "No spam — just useful updates on the Riviera Maya market, once or twice a month.",
+      nlPlaceholder: "you@email.com",
+      nlSubmit: "Sign me up",
+      nlSuccess: "Thanks! You're on the list.",
+      nlNote: "We'll never share your email."
+    },
+    es: {
+      eyebrow: "At Home Realty · eXp Realty",
+      headline: "¿Estás pensando en comprar en Playa del Carmen?",
+      sub: "Explora las propiedades disponibles, o deja tu correo para recibir el boletín mensual del mercado en la Riviera Maya — nuevas propiedades, consejos para compradores y guías de zonas.",
+      ctaBrowse: "Ver Propiedades →",
+      orLabel: "o",
+      nlTitle: "Recibe el boletín",
+      nlBody: "Sin spam — solo actualizaciones útiles del mercado de la Riviera Maya, una o dos veces al mes.",
+      nlPlaceholder: "tu@correo.com",
+      nlSubmit: "Quiero recibirlo",
+      nlSuccess: "¡Gracias! Ya estás en la lista.",
+      nlNote: "Nunca compartiremos tu correo."
+    },
+    fr: {
+      eyebrow: "At Home Realty · eXp Realty",
+      headline: "Vous pensez acheter à Playa del Carmen ?",
+      sub: "Parcourez les propriétés disponibles, ou laissez votre email pour recevoir la newsletter mensuelle sur le marché de la Riviera Maya — nouvelles propriétés, conseils d'achat et guides de quartiers.",
+      ctaBrowse: "Voir les Propriétés →",
+      orLabel: "ou",
+      nlTitle: "Recevoir la newsletter",
+      nlBody: "Pas de spam — juste des mises à jour utiles sur le marché de la Riviera Maya, une à deux fois par mois.",
+      nlPlaceholder: "vous@email.com",
+      nlSubmit: "Je m'inscris",
+      nlSuccess: "Merci ! Vous êtes inscrit(e).",
+      nlNote: "Nous ne partagerons jamais votre email."
+    }
+  };
+
+  function applyLang(lang){
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      const dict = translations[lang] || translations.en;
+      if(dict[key] !== undefined) el.innerHTML = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+      const key = el.getAttribute('data-i18n-placeholder');
+      const dict = translations[lang] || translations.en;
+      if(dict[key] !== undefined) el.setAttribute('placeholder', dict[key]);
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn=>{
+      btn.classList.toggle('active', btn.getAttribute('data-lang-btn') === lang);
+    });
+    document.documentElement.setAttribute('lang', lang);
+    try{ localStorage.setItem('erm-welcome-lang', lang); }catch(e){}
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> applyLang(btn.getAttribute('data-lang-btn')));
+  });
+
+  let initialLang = 'en';
+  try{
+    const saved = localStorage.getItem('erm-welcome-lang');
+    if(saved && translations[saved]) initialLang = saved;
+  }catch(e){}
+  applyLang(initialLang);
+
+  const form = document.getElementById('newsletter-form');
+  const successMsg = document.getElementById('success-msg');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const data = new FormData(form);
+    fetch(form.action, {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    }).then(response => {
+      if(response.ok){
+        form.style.display = 'none';
+        successMsg.classList.add('visible');
+      } else {
+        alert('Something went wrong — please try again.');
+      }
+    }).catch(() => {
+      alert('Something went wrong — please try again.');
+    });
+  });
+</script>
+
+</body>
+</html>
