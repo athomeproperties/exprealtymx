@@ -33,6 +33,10 @@
   .stage-pill{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:700; color:var(--teal); white-space:nowrap; }
   .empty{ color:var(--gray); font-size:14px; padding:20px 0; text-align:center; }
   .loading{ color:var(--gray); font-size:14px; }
+  .search-box{ position:relative; }
+  .search-box input{ padding-right:32px; }
+  .search-box .clear-search{ position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--gray); cursor:pointer; font-size:18px; padding:2px 4px; line-height:1; width:auto; margin-top:0; }
+  .search-box .clear-search:hover{ color:#b3261e; }
 </style>
 </head>
 <body>
@@ -73,6 +77,11 @@
         <option value="">All Stages</option>
       </select>
     </div>
+    <div class="search-box" style="margin-bottom:16px;">
+      <label for="nameSearch">Search by name</label>
+      <input type="text" id="nameSearch" placeholder="Type a prospect's name...">
+      <button type="button" class="clear-search hidden" id="clearSearchBtn" title="Clear search">&times;</button>
+    </div>
     <div id="tableWrap"><p class="loading">Loading...</p></div>
   </div>
 
@@ -97,6 +106,7 @@ const STAGE_COLORS = {
 
 let allRecords = [];
 let currentRecords = [];
+let searchQuery = '';
 
 const gate = document.getElementById('gate');
 const ownerPick = document.getElementById('ownerPick');
@@ -141,11 +151,27 @@ document.getElementById('logoutBtn').addEventListener('click', function(){
   showScreen(gate);
 });
 
-document.getElementById('stageFilter').addEventListener('change', function(){
-  const val = this.value;
-  const filtered = val ? currentRecords.filter(r => r.stage === val) : currentRecords;
-  renderTable(filtered);
+document.getElementById('stageFilter').addEventListener('change', applyFilters);
+
+document.getElementById('nameSearch').addEventListener('input', function(){
+  searchQuery = this.value;
+  document.getElementById('clearSearchBtn').classList.toggle('hidden', !searchQuery);
+  applyFilters();
 });
+document.getElementById('clearSearchBtn').addEventListener('click', function(){
+  searchQuery = '';
+  document.getElementById('nameSearch').value = '';
+  this.classList.add('hidden');
+  applyFilters();
+});
+
+function applyFilters(){
+  const stageVal = document.getElementById('stageFilter').value;
+  let filtered = stageVal ? currentRecords.filter(r => r.stage === stageVal) : currentRecords;
+  const q = searchQuery.trim().toLowerCase();
+  if (q) filtered = filtered.filter(r => (r.prospectName || '').toLowerCase().includes(q));
+  renderTable(filtered);
+}
 
 async function loadOwners(){
   try {
@@ -188,13 +214,22 @@ async function loadDashboard(owner){
   const wrap = document.getElementById('tableWrap');
   wrap.innerHTML = '<p class="loading">Loading...</p>';
   document.getElementById('stageFilter').value = '';
+  searchQuery = '';
+  document.getElementById('nameSearch').value = '';
+  document.getElementById('clearSearchBtn').classList.add('hidden');
   currentRecords = allRecords.filter(r => r.owner === owner);
   renderTable(currentRecords);
 }
 
 function renderTable(records){
   const wrap = document.getElementById('tableWrap');
-  if (!records.length) { wrap.innerHTML = '<p class="empty">No prospects yet.</p>'; return; }
+  if (!records.length) {
+    const msg = (searchQuery || document.getElementById('stageFilter').value) && currentRecords.length
+      ? 'No prospects match your search/filter.'
+      : 'No prospects yet.';
+    wrap.innerHTML = `<p class="empty">${msg}</p>`;
+    return;
+  }
   records = records.slice().sort((a,b) => (b.lastUpdated || '').localeCompare(a.lastUpdated || ''));
   let html = '<table><thead><tr><th>Prospect</th><th>Setter</th><th>Stage</th><th>Zoom Date</th><th>Next Step</th><th>Notes</th><th>Updated</th></tr></thead><tbody>';
   records.forEach(r => {
