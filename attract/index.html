@@ -27,8 +27,10 @@
   .error{ color:#b3261e; font-size:13px; margin-top:8px; display:none; }
   .hidden{ display:none !important; }
   .toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
-  table{ width:100%; border-collapse:collapse; margin-top:12px; }
+  #tableWrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  table{ width:100%; min-width:720px; border-collapse:collapse; margin-top:12px; }
   th,td{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); font-size:14px; vertical-align:top; }
+  td.notes-cell{ max-width:320px; word-break:break-word; }
   th{ font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:var(--gray); }
   .stage-pill{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:700; color:var(--teal); white-space:nowrap; }
   .empty{ color:var(--gray); font-size:14px; padding:20px 0; text-align:center; }
@@ -240,7 +242,7 @@ function renderTable(records){
       <td><span class="stage-pill" style="background:${color};">${escapeHtml(r.stage || '')}</span></td>
       <td>${escapeHtml(r.zoomDate || '')}</td>
       <td>${escapeHtml(r.nextStep || '')}</td>
-      <td>${escapeHtml(r.notes || '')}</td>
+      <td class="notes-cell">${escapeHtml(r.notes || '')}</td>
       <td>${escapeHtml(r.lastUpdated || '')}</td>
     </tr>`;
   });
