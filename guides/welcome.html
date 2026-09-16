@@ -336,19 +336,27 @@
   const successMsg = document.getElementById('success-msg');
   form.addEventListener('submit', function(e){
     e.preventDefault();
-    const data = new FormData(form);
+    const formData = new FormData(form);
+    const object = Object.fromEntries(formData);
+    const json = JSON.stringify(object);
     fetch(form.action, {
       method: 'POST',
-      body: data,
-      headers: { 'Accept': 'application/json' }
-    }).then(response => {
-      if(response.ok){
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: json
+    }).then(async (response) => {
+      if(response.status === 200){
         form.style.display = 'none';
         successMsg.classList.add('visible');
       } else {
+        const result = await response.json().catch(()=>({}));
+        console.log(result);
         alert('Something went wrong — please try again.');
       }
-    }).catch(() => {
+    }).catch((error) => {
+      console.log(error);
       alert('Something went wrong — please try again.');
     });
   });
