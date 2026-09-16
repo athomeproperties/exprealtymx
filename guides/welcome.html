@@ -245,7 +245,9 @@
       <div class="newsletter-card">
         <h2 data-i18n="nlTitle">Get the newsletter</h2>
         <p data-i18n="nlBody">No spam — just useful updates on the Riviera Maya market, once or twice a month.</p>
-        <form class="newsletter-form" id="newsletter-form" action="https://formspree.io/f/xjybnejy" method="POST">
+        <form class="newsletter-form" id="newsletter-form" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="5fee8e79-07d3-4405-b18e-f245b4eba3fc">
+          <input type="hidden" name="subject" value="New Newsletter Signup">
           <input type="email" name="email" placeholder="you@email.com" data-i18n-placeholder="nlPlaceholder" required>
           <button type="submit" data-i18n="nlSubmit">Sign me up</button>
         </form>
