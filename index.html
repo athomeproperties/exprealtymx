@@ -614,6 +614,19 @@
 </footer>
 
 <script>
+// ── IMAGE SPEED: Cloudinary on-the-fly optimization ──
+// Inserts f_auto,q_auto,w_NNN right after /upload/ in a Cloudinary URL so the
+// browser gets an auto-format (webp/avif), auto-quality, width-capped image
+// instead of the full-resolution original. Non-Cloudinary URLs pass through
+// unchanged. No re-upload needed — this only rewrites the URL.
+function cldOptimize(url, width) {
+  if (!url || typeof url !== 'string') return url;
+  if (!/res\.cloudinary\.com/.test(url) || url.indexOf('/upload/') === -1) return url;
+  if (/\/upload\/[^/]*w_\d/.test(url)) return url; // already has transforms
+  const w = width ? `,w_${width}` : '';
+  return url.replace('/upload/', `/upload/f_auto,q_auto${w}/`);
+}
+
 // ── NAV ──
 const nav = document.getElementById('mainNav');
 window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 60));
@@ -765,7 +778,7 @@ function renderListings() {
     ].filter(Boolean);
 
     const img = (p.image || p.heroPhoto)
-      ? `<img src="${p.image || p.heroPhoto}" alt="${p.title}" loading="lazy">`
+      ? `<img src="${cldOptimize(p.image || p.heroPhoto, 500)}" alt="${p.title}" loading="lazy">`
       : '<div class="no-img">No image</div>';
 
     const deliveryLabel = es ? 'Entrega' : fr ? 'Livraison' : 'Delivery';

@@ -325,12 +325,24 @@
 
   function g(id) { return document.getElementById(id); }
 
+  // Inserts f_auto,q_auto,w_NNN right after /upload/ in a Cloudinary URL so the
+  // browser gets an auto-format (webp/avif), auto-quality, width-capped image
+  // instead of the full-resolution original. Non-Cloudinary URLs pass through
+  // unchanged. No re-upload needed — this only rewrites the URL.
+  function cldOptimize(url, width) {
+    if (!url || typeof url !== 'string') return url;
+    if (!/res\.cloudinary\.com/.test(url) || url.indexOf('/upload/') === -1) return url;
+    if (/\/upload\/[^/]*w_\d/.test(url)) return url; // already has transforms
+    var w = width ? (',w_' + width) : '';
+    return url.replace('/upload/', '/upload/f_auto,q_auto' + w + '/');
+  }
+
   window.changePhoto = function(dir) {
     if (!allPhotos.length) return;
     currentIdx = (currentIdx + dir + allPhotos.length) % allPhotos.length;
     var img = g('galleryMain');
     img.style.opacity = '0';
-    setTimeout(function() { img.src = allPhotos[currentIdx]; img.style.opacity = '1'; }, 150);
+    setTimeout(function() { img.src = cldOptimize(allPhotos[currentIdx], 1200); img.style.opacity = '1'; }, 150);
     g('galleryCounter').textContent = (currentIdx + 1) + ' / ' + allPhotos.length;
     document.querySelectorAll('.gallery-thumb').forEach(function(t, i) {
       t.classList.toggle('active', i === currentIdx);
@@ -345,7 +357,7 @@
     document.title = p.title + ' | At Home Realty';
     g('pageDesc').setAttribute('content', p.title + ' - ' + p.area + '. ' + (p.price||'') + '. At Home Realty Riviera Maya.');
     var hero = g('heroImg');
-    hero.src = p.heroPhoto || p.image || '';
+    hero.src = cldOptimize(p.heroPhoto || p.image || '', 1600);
     hero.alt = p.title;
     hero.onload = function() { hero.classList.add('loaded'); };
     g('heroStatus').textContent = p.status || '';
@@ -355,13 +367,13 @@
     g('formProperty').value    = p.title;
 
     allPhotos = (p.photos && p.photos.length) ? p.photos : (p.heroPhoto || p.image) ? [p.heroPhoto || p.image] : [];
-    g('galleryMain').src = allPhotos[0] || '';
+    g('galleryMain').src = cldOptimize(allPhotos[0] || '', 1200);
     g('galleryMain').alt = p.title;
     g('galleryCounter').textContent = '1 / ' + (allPhotos.length || 1);
     g('prevBtn').style.display = allPhotos.length > 1 ? '' : 'none';
     g('nextBtn').style.display = allPhotos.length > 1 ? '' : 'none';
     g('galleryThumbs').innerHTML = allPhotos.map(function(src, i) {
-      return '<div class="gallery-thumb' + (i===0?' active':'') + '" onclick="changePhoto(' + (i - currentIdx) + ')"><img src="' + src + '" loading="lazy"></div>';
+      return '<div class="gallery-thumb' + (i===0?' active':'') + '" onclick="changePhoto(' + (i - currentIdx) + ')"><img src="' + cldOptimize(src, 200) + '" loading="lazy"></div>';
     }).join('');
 
     g('detailsPrice').textContent = p.price || '';
