@@ -314,8 +314,7 @@
 
 <script>
 (function() {
-  var BIN = 'https://api.jsonbin.io/v3/b/6a5018fef5f4af5e2979b9de/latest';
-  var KEY = '$2a$10$aBf8XbTryUhixbcSSdD5JOmW3rBdACUhwMTEgSUgPA0K0Rfzv3izG';
+  var LISTINGS_API = '/api/properties';
   var STATUS_COLORS = {
     'Pre-sale':'#B8882E','For Sale':'#2E6FB8','For Rent':'#2E6FB8',
     'Now Delivering':'#2E8B57','Sold':'#6B7280'
@@ -459,10 +458,9 @@
   });
 
   // Fetch and render
-  fetch(BIN, {headers: {'X-Master-Key': KEY}})
+  fetch(LISTINGS_API)
     .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var listings = data.record;
+    .then(function(listings) {
       var id = new URLSearchParams(window.location.search).get('id') || '';
       var p  = null;
       for (var i = 0; i < listings.length; i++) {

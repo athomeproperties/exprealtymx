@@ -327,10 +327,9 @@ header {
 //  CONFIG — change the password here
 // ─────────────────────────────────────────────
 const ADMIN_PASSWORD = "AtHome2025!";
-const JSONBIN_URL    = "https://api.jsonbin.io/v3/b/6a5018fef5f4af5e2979b9de";
+const LISTINGS_API   = "/api/properties";
 const CLOUDINARY_URL    = "https://api.cloudinary.com/v1_1/ffngk6tu/image/upload";
 const CLOUDINARY_PRESET = "exprealtymx";
-const JSONBIN_KEY    = "$2a$10$aBf8XbTryUhixbcSSdD5JOmW3rBdACUhwMTEgSUgPA0K0Rfzv3izG";
 
 // ─────────────────────────────────────────────
 //  AUTH
@@ -382,15 +381,12 @@ let isNew      = false;
 async function init() {
   showSaving("Loading listings…");
   try {
-    const r = await fetch(JSONBIN_URL + "/latest", {
-      headers: { "X-Master-Key": JSONBIN_KEY }
-    });
+    const r = await fetch(LISTINGS_API);
     if (!r.ok) throw new Error(r.status);
-    const data = await r.json();
-    listings = data.record;
+    listings = await r.json();
     hideSaving();
   } catch(e) {
-    console.warn("JSONBin fetch failed, using defaults:", e);
+    console.warn("Listings API fetch failed, using defaults:", e);
     listings = JSON.parse(JSON.stringify(DEFAULT_LISTINGS));
     hideSaving();
     showToast("Could not reach cloud — using local data", false);
@@ -694,11 +690,11 @@ function deleteProperty(id) {
 async function persist() {
   showSaving("Saving to site…");
   try {
-    const r = await fetch(JSONBIN_URL, {
+    const r = await fetch(LISTINGS_API, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "X-Master-Key": JSONBIN_KEY
+        "X-Admin-Password": ADMIN_PASSWORD
       },
       body: JSON.stringify(listings)
     });
@@ -708,11 +704,11 @@ async function persist() {
   } catch(e) {
     hideSaving();
     showToast("Save failed — check your connection", false);
-    console.error("JSONBin PUT failed:", e);
+    console.error("Listings API PUT failed:", e);
   }
 }
 
-// Export removed — changes save directly to JSONBin
+// Export removed — changes save directly to the listings API
 
 // ─────────────────────────────────────────────
 //  SAVE STATUS INDICATOR
