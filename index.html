@@ -651,18 +651,17 @@ function toggleFaq(btn) {
   }
 }
 
-// ── LISTINGS: fetch from JSONBin then render everything ──
-const BIN_URL = "https://api.jsonbin.io/v3/b/6a5018fef5f4af5e2979b9de/latest";
-const BIN_KEY = "$2a$10$aBf8XbTryUhixbcSSdD5JOmW3rBdACUhwMTEgSUgPA0K0Rfzv3izG";
+// ── LISTINGS: fetch from the listings API then render everything ──
+const LISTINGS_API = "/api/properties";
 let activeArea = '';
 
 // Ensure language is set before first render
 window._lang = window._lang || localStorage.getItem('ahr_lang') || 'en';
 
-fetch(BIN_URL, { headers: { "X-Master-Key": BIN_KEY } })
+fetch(LISTINGS_API)
   .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-  .then(data => {
-    window.LISTINGS = data.record;
+  .then(listings => {
+    window.LISTINGS = listings;
     buildUI();
     // Pre-apply area filter from URL param (e.g. ?area=Playa+del+Carmen)
     const _urlArea = new URLSearchParams(window.location.search).get('area');
