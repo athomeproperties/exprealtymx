@@ -7,17 +7,22 @@
 // entirely -- delete property.html.js once this is in place, don't keep
 // both.
 //
-// Why the change: property.html.js relies on Cloudflare inferring the
+// Why the change: property.html.js relied on Cloudflare inferring the
 // route /property.html from a filename with two dots in it
-// ("property" + ".html" + ".js"). That's a less common pattern, and
-// there's reason to suspect it's either not being parsed correctly by
-// this project's build, or not being compiled as a function at all.
-// _middleware.js is Cloudflare's standard, unambiguous mechanism: it runs
-// on every request under functions/ (i.e. the whole site), and this code
-// decides for itself whether the current request is /property.html by
-// checking the URL directly -- no filename-based route guessing involved.
-// For every other URL, it calls context.next() immediately and gets out
-// of the way, so it can't affect the rest of the site.
+// ("property" + ".html" + ".js"). That wasn't actually the problem though --
+// the REAL cause (confirmed by checking with redirects disabled): Cloudflare
+// Pages automatically redirects /property.html to the extension-less
+// "clean URL" /property, because a literal file named property.html exists.
+// That redirect happens before any single-route function gets a chance to
+// run, so no matter what functions/property.html.js was named, it could
+// never see the request -- the real, final request is for /property, not
+// /property.html.
+//
+// _middleware.js runs on every request under functions/ (the whole site)
+// and checks the URL itself, so it catches the request under either
+// spelling, however Cloudflare ends up routing it. For every other URL, it
+// calls context.next() immediately and gets out of the way, so it can't
+// affect the rest of the site.
 //
 // Uses the same PROPERTIES_KV binding as functions/api/properties.js --
 // no new Cloudflare setup needed.
@@ -26,9 +31,9 @@ export async function onRequest(context) {
   const { request, env } = context;
   const url = new URL(request.url);
 
-  // Only act on the property page itself; everything else passes straight
-  // through untouched.
-  if (url.pathname !== '/property.html') {
+  // Only act on the property page itself (with or without the .html
+  // Cloudflare strips); everything else passes straight through untouched.
+  if (url.pathname !== '/property.html' && url.pathname !== '/property') {
     return context.next();
   }
 
@@ -113,7 +118,10 @@ function rewrite(assetResponse, p, origin) {
 
   const priceNumber = String(p.price || '').replace(/[^0-9.]/g, '');
   const currency = /USD/i.test(p.price || '') ? 'USD' : 'MXN';
-  const canonicalUrl = `${origin}/property.html?id=${encodeURIComponent(p.id)}`;
+  // Cloudflare redirects /property.html to /property (see note above), so
+  // the canonical URL should point at the address that's actually served,
+  // not the one that immediately redirects away from itself.
+  const canonicalUrl = `${origin}/property?id=${encodeURIComponent(p.id)}`;
 
   const jsonLdObj = {
     '@context': 'https://schema.org',
