@@ -796,13 +796,17 @@ function buildUI() {
   o.value = o.textContent = 'Not sure yet';
   sel.appendChild(o);
 
-  // Footer areas
+  // Footer areas — link to the dedicated area landing pages rather than the
+  // live listing data, so all four always show even when one currently has
+  // no active inventory.
   const footerAreas = document.getElementById('footerAreas');
   if (footerAreas) {
-    const locations = [...new Set(LISTINGS.map(p => p.area))];
-    footerAreas.innerHTML = locations.map(a =>
-      `<li><a href="index.html?area=${encodeURIComponent(a)}#listings">${a}</a></li>`
-    ).join('');
+    footerAreas.innerHTML = [
+      ['playa-del-carmen.html', 'Playa del Carmen'],
+      ['tulum.html', 'Tulum'],
+      ['puerto-aventuras.html', 'Puerto Aventuras'],
+      ['akumal.html', 'Akumal']
+    ].map(([href, label]) => `<li><a href="${href}">${label}</a></li>`).join('');
   }
 }
 
