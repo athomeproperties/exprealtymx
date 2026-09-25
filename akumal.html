@@ -412,9 +412,11 @@ function toggleFaq(btn) {
 }
 
 // ── LISTINGS: fetch from the shared listings API, keep only Akumal matches ──
-const AREA_MATCH = ["akumal","half moon bay","yal-ku","yalku"];
+const AREA_MATCH = ["akumal","half moon bay","yal-ku","yalku","tulum country club","country club"];
+const AREA_EXCLUDE = [];
 function isAreaMatch(p) {
   const a = (p && p.area ? String(p.area) : '').toLowerCase();
+  if (AREA_EXCLUDE.some(k => a.includes(k))) return false;
   return AREA_MATCH.some(k => a.includes(k));
 }
 

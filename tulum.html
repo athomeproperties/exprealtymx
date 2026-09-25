@@ -413,8 +413,10 @@ function toggleFaq(btn) {
 
 // ── LISTINGS: fetch from the shared listings API, keep only Tulum matches ──
 const AREA_MATCH = ["tulum","tankah","aldea zama","la veleta","veleta"];
+const AREA_EXCLUDE = ["country club"];
 function isAreaMatch(p) {
   const a = (p && p.area ? String(p.area) : '').toLowerCase();
+  if (AREA_EXCLUDE.some(k => a.includes(k))) return false;
   return AREA_MATCH.some(k => a.includes(k));
 }
 
