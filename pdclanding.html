@@ -9,22 +9,23 @@
 
 <!--
   SETUP CHECKLIST (search for these placeholders before publishing):
-  1. AW-XXXXXXXXX        -> your Google Ads conversion ID (appears 3 times)
-  2. AW_LABEL            -> your conversion label for the "Lead" action
-  3. Guide PDF           -> upload Playa_del_Carmen_Condo_Buyers_Guide.pdf to /guides/ in the repo
-  4. PRIVACY_URL         -> your privacy policy page
-  5. /img/craig.jpg      -> your headshot (optional, falls back to initials)
+  1. Google tag ID AW-18494907262 is already filled in.
+  2. "Guide form lead" conversion label is already filled in.
+  3. "WhatsApp Click" conversion label is already filled in.
+  4. Guide PDF           -> upload Playa_del_Carmen_Condo_Buyers_Guide.pdf to /guides/ in the repo
+  5. Privacy page        -> upload privacy.html next to this file (served at /privacy)
+  6. /img/craig.jpg      -> your headshot (optional, falls back to initials)
   Form submissions are emailed to craig.verbeck@expmexico.mx through FormSubmit.
   The FIRST submission triggers a one-time activation email: click it to activate.
 -->
 
 <!-- Google tag -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXX"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18494907262"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'AW-XXXXXXXXX');
+  gtag('config', 'AW-18494907262');
 </script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -187,7 +188,7 @@
           <p class="err" id="err"></p>
           <button class="btn" id="submitBtn" type="submit">Get the free guide</button>
           <a class="btn wa" href="https://wa.me/529842136512?text=Hi%20Craig%2C%20I%27m%20interested%20in%20buying%20a%20condo%20in%20Playa%20del%20Carmen." target="_blank" rel="noopener" data-track="whatsapp">Prefer WhatsApp? Chat with Craig</a>
-          <p class="fine">By submitting you agree to be contacted by Craig Verbeck about your property search. No spam, and you can opt out anytime. <a href="PRIVACY_URL">Privacy policy</a>.</p>
+          <p class="fine">By submitting you agree to be contacted by Craig Verbeck about your property search. No spam, and you can opt out anytime. <a href="/privacy">Privacy policy</a>.</p>
         </form>
       </div>
 
@@ -256,7 +257,7 @@
 <footer>
   <div class="wrap">
     <p>&copy; <span id="yr"></span> Craig Verbeck &middot; eXp Realty M&eacute;xico &middot; Playa del Carmen, Quintana Roo, M&eacute;xico &middot; craig.verbeck@expmexico.mx</p>
-    <p>This guide is general information, not legal, tax or financial advice. Consult qualified professionals before buying. Prices and regulations change. <a href="PRIVACY_URL">Privacy policy</a></p>
+    <p>This guide is general information, not legal, tax or financial advice. Consult qualified professionals before buying. Prices and regulations change. <a href="/privacy">Privacy policy</a></p>
   </div>
 </footer>
 
@@ -269,7 +270,8 @@
 <script>
 (function(){
   var FORM_ENDPOINT = 'https://formsubmit.co/ajax/craig.verbeck@expmexico.mx';
-  var CONVERSION_SEND_TO = 'AW-XXXXXXXXX/AW_LABEL';
+  var LEAD_SEND_TO = 'AW-18494907262/nQszCJzbwJEdEP7Gh_NE';
+  var WHATSAPP_SEND_TO = 'AW-18494907262/9bSYCJ_bwJEdEP7Gh_NE';
 
   document.getElementById('yr').textContent = new Date().getFullYear();
 
@@ -294,7 +296,7 @@
       var t = a.getAttribute('data-track');
       track(t);
       if(t === 'whatsapp' && typeof gtag === 'function'){
-        gtag('event','conversion',{send_to: CONVERSION_SEND_TO.replace('AW_LABEL','AW_LABEL'), value: 1, currency:'USD'});
+        gtag('event','conversion',{send_to: WHATSAPP_SEND_TO, value: 1, currency:'MXN'});
       }
     });
   });
@@ -331,7 +333,7 @@
       .then(function(r){ if(!r.ok) throw new Error('bad status'); return r; })
       .then(function(){
         if(typeof gtag === 'function'){
-          gtag('event','conversion',{send_to: CONVERSION_SEND_TO, value: 1, currency:'USD'});
+          gtag('event','conversion',{send_to: LEAD_SEND_TO, value: 1, currency:'MXN'});
         }
         document.getElementById('thanksName').textContent = name.split(' ')[0];
         document.getElementById('formWrap').style.display = 'none';
