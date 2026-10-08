@@ -39,55 +39,145 @@
   .search-box input{ padding-right:32px; }
   .search-box .clear-search{ position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--gray); cursor:pointer; font-size:18px; padding:2px 4px; line-height:1; width:auto; margin-top:0; }
   .search-box .clear-search:hover{ color:#b3261e; }
+  .lang-switch{ position:fixed; top:12px; right:12px; display:flex; gap:4px; z-index:20; }
+  .lang-switch button{ width:auto; margin:0; padding:5px 10px; font-size:12px; background:#fff; color:var(--teal);
+        border:1px solid var(--border); border-radius:6px; }
+  .lang-switch button.active{ background:var(--teal); color:var(--sand); border-color:var(--teal); }
 </style>
 </head>
 <body>
 
+  <div class="lang-switch" id="langSwitch" role="group" aria-label="Language">
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="es">ES</button>
+    <button type="button" data-lang="fr">FR</button>
+  </div>
+
   <div class="card" id="gate">
-    <h1>Team Portal</h1>
-    <p style="color:var(--gray); font-size:14px;">Enter the portal password to continue.</p>
+    <h1 data-i18n="gateTitle">Team Portal</h1>
+    <p style="color:var(--gray); font-size:14px;" data-i18n="gateIntro">Enter the portal password to continue.</p>
     <form id="gateForm">
-      <label for="gatePassword">Password</label>
+      <label for="gatePassword" data-i18n="password">Password</label>
       <input type="password" id="gatePassword" autocomplete="current-password" required>
-      <div class="error" id="gateError">Incorrect password.</div>
-      <button type="submit">Enter</button>
+      <div class="error" id="gateError" data-i18n="wrongPassword">Incorrect password.</div>
+      <button type="submit" data-i18n="enter">Enter</button>
     </form>
   </div>
 
   <div class="card hidden" id="ownerPick">
-    <h1>Who are you?</h1>
-    <p style="color:var(--gray); font-size:14px;">Select your name to see your prospects.</p>
-    <label for="ownerSelect">Your name</label>
+    <h1 data-i18n="whoAreYou">Who are you?</h1>
+    <p style="color:var(--gray); font-size:14px;" data-i18n="pickIntro">Select your name to see your prospects.</p>
+    <label for="ownerSelect" data-i18n="yourName">Your name</label>
     <select id="ownerSelect"></select>
-    <button id="viewBtn">View my prospects</button>
+    <button id="viewBtn" data-i18n="viewMine">View my prospects</button>
   </div>
 
   <div class="card wide hidden" id="dashboard">
     <div class="toolbar">
       <div>
         <h2 id="dashTitle">Prospects</h2>
-        <p style="color:var(--gray); font-size:13px; margin:0;">Updated live from the team tracker</p>
+        <p style="color:var(--gray); font-size:13px; margin:0;" data-i18n="liveNote">Updated live from the team tracker</p>
       </div>
       <div style="display:flex; gap:8px;">
-        <button class="secondary" id="switchBtn">Switch name</button>
-        <button class="secondary" id="logoutBtn">Log out</button>
+        <button class="secondary" id="switchBtn" data-i18n="switchName">Switch name</button>
+        <button class="secondary" id="logoutBtn" data-i18n="logout">Log out</button>
       </div>
     </div>
     <div style="margin-bottom:16px;">
-      <label for="stageFilter">Filter by stage</label>
+      <label for="stageFilter" data-i18n="filterStage">Filter by stage</label>
       <select id="stageFilter">
-        <option value="">All Stages</option>
+        <option value="" data-i18n="allStages">All Stages</option>
       </select>
     </div>
     <div class="search-box" style="margin-bottom:16px;">
-      <label for="nameSearch">Search by name</label>
-      <input type="text" id="nameSearch" placeholder="Type a prospect's name...">
-      <button type="button" class="clear-search hidden" id="clearSearchBtn" title="Clear search">&times;</button>
+      <label for="nameSearch" data-i18n="searchByName">Search by name</label>
+      <input type="text" id="nameSearch" data-i18n-ph="searchPh" placeholder="Type a prospect's name...">
+      <button type="button" class="clear-search hidden" id="clearSearchBtn" title="Clear search" data-i18n-title="clearSearch">&times;</button>
     </div>
-    <div id="tableWrap"><p class="loading">Loading...</p></div>
+    <div id="tableWrap"><p class="loading" data-i18n="loading">Loading...</p></div>
   </div>
 
 <script>
+/* ===================== LANGUAGES (EN / ES / FR) ===================== */
+const I18N = {
+  en: {
+    pageTitle:"Team Portal", gateTitle:"Team Portal", gateIntro:"Enter the portal password to continue.",
+    password:"Password", wrongPassword:"Incorrect password.", enter:"Enter",
+    whoAreYou:"Who are you?", pickIntro:"Select your name to see your prospects.", yourName:"Your name", viewMine:"View my prospects",
+    dashTitle:"{name}'s Prospects", liveNote:"Updated live from the team tracker",
+    switchName:"Switch name", logout:"Log out", filterStage:"Filter by stage", allStages:"All Stages",
+    searchByName:"Search by name", searchPh:"Type a prospect's name...", clearSearch:"Clear search",
+    loading:"Loading...", noMatch:"No prospects match your search/filter.", noneYet:"No prospects yet.",
+    colProspect:"Prospect", colSetter:"Setter", colStage:"Stage", colZoom:"Zoom Date", colNext:"Next Step", colNotes:"Notes", colUpdated:"Updated",
+    stages:{"New Prospect":"New Prospect","Collab Scheduled":"Collab Scheduled","Collab Completed":"Collab Completed","R1 Scheduled":"R1 Scheduled","R1 Completed":"R1 Completed","R2 Scheduled":"R2 Scheduled","R2 Completed":"R2 Completed","Closed Won":"Closed Won","Closed Lost":"Closed Lost"}
+  },
+  es: {
+    pageTitle:"Portal del Equipo", gateTitle:"Portal del Equipo", gateIntro:"Ingresa la contraseña del portal para continuar.",
+    password:"Contraseña", wrongPassword:"Contraseña incorrecta.", enter:"Entrar",
+    whoAreYou:"¿Quién eres?", pickIntro:"Selecciona tu nombre para ver tus prospectos.", yourName:"Tu nombre", viewMine:"Ver mis prospectos",
+    dashTitle:"Prospectos de {name}", liveNote:"Actualizado en vivo desde el seguimiento del equipo",
+    switchName:"Cambiar nombre", logout:"Cerrar sesión", filterStage:"Filtrar por etapa", allStages:"Todas las etapas",
+    searchByName:"Buscar por nombre", searchPh:"Escribe el nombre de un prospecto...", clearSearch:"Borrar búsqueda",
+    loading:"Cargando...", noMatch:"Ningún prospecto coincide con tu búsqueda o filtro.", noneYet:"Aún no hay prospectos.",
+    colProspect:"Prospecto", colSetter:"Agendador", colStage:"Etapa", colZoom:"Fecha de Zoom", colNext:"Siguiente paso", colNotes:"Notas", colUpdated:"Actualizado",
+    stages:{"New Prospect":"Nuevo prospecto","Collab Scheduled":"Colab programada","Collab Completed":"Colab completada","R1 Scheduled":"R1 programada","R1 Completed":"R1 completada","R2 Scheduled":"R2 programada","R2 Completed":"R2 completada","Closed Won":"Cerrado ganado","Closed Lost":"Cerrado perdido"}
+  },
+  fr: {
+    pageTitle:"Portail de l'équipe", gateTitle:"Portail de l'équipe", gateIntro:"Saisissez le mot de passe du portail pour continuer.",
+    password:"Mot de passe", wrongPassword:"Mot de passe incorrect.", enter:"Entrer",
+    whoAreYou:"Qui êtes-vous ?", pickIntro:"Sélectionnez votre nom pour voir vos prospects.", yourName:"Votre nom", viewMine:"Voir mes prospects",
+    dashTitle:"Prospects de {name}", liveNote:"Mis à jour en direct depuis le suivi de l'équipe",
+    switchName:"Changer de nom", logout:"Se déconnecter", filterStage:"Filtrer par étape", allStages:"Toutes les étapes",
+    searchByName:"Rechercher par nom", searchPh:"Saisissez le nom d'un prospect...", clearSearch:"Effacer la recherche",
+    loading:"Chargement...", noMatch:"Aucun prospect ne correspond à votre recherche ou filtre.", noneYet:"Aucun prospect pour le moment.",
+    colProspect:"Prospect", colSetter:"Prospecteur", colStage:"Étape", colZoom:"Date du Zoom", colNext:"Prochaine étape", colNotes:"Notes", colUpdated:"Mis à jour",
+    stages:{"New Prospect":"Nouveau prospect","Collab Scheduled":"Collab planifiée","Collab Completed":"Collab terminée","R1 Scheduled":"R1 planifiée","R1 Completed":"R1 terminée","R2 Scheduled":"R2 planifiée","R2 Completed":"R2 terminée","Closed Won":"Clôturé gagné","Closed Lost":"Clôturé perdu"}
+  }
+};
+let LANG = 'en';
+try {
+  const saved = localStorage.getItem('portalLang');
+  if (saved && I18N[saved]) LANG = saved;
+  else { const nav = (navigator.language || 'en').slice(0,2).toLowerCase(); if (I18N[nav]) LANG = nav; }
+} catch (e) {}
+function t(key, vars){
+  let str = (I18N[LANG] && I18N[LANG][key]) || I18N.en[key] || key;
+  if (vars) Object.keys(vars).forEach(k => { str = str.replace('{' + k + '}', vars[k]); });
+  return str;
+}
+function stageLabel(stage){ return (I18N[LANG].stages && I18N[LANG].stages[stage]) || stage; }
+function fmtDate(iso){
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+  if (!m) return iso || '';
+  return new Date(+m[1], +m[2]-1, +m[3]).toLocaleDateString(LANG, { day:'numeric', month:'short', year:'numeric' });
+}
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.title = t('pageTitle');
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.dataset.i18nTitle); });
+  document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('active', b.dataset.lang === LANG));
+  // stage filter options (keep the current selection)
+  const stageSel = document.getElementById('stageFilter');
+  const current = stageSel.value;
+  stageSel.innerHTML = '';
+  const all = document.createElement('option'); all.value = ''; all.textContent = t('allStages'); stageSel.appendChild(all);
+  Object.keys(STAGE_COLORS).forEach(stage => {
+    const opt = document.createElement('option'); opt.value = stage; opt.textContent = stageLabel(stage); stageSel.appendChild(opt);
+  });
+  stageSel.value = current;
+  // dashboard title + table, if a dashboard is showing
+  if (currentOwner) document.getElementById('dashTitle').textContent = t('dashTitle', { name: currentOwner });
+  if (!dashboard.classList.contains('hidden')) applyFilters();
+}
+document.querySelectorAll('#langSwitch button').forEach(b => b.addEventListener('click', function(){
+  LANG = this.dataset.lang;
+  try { localStorage.setItem('portalLang', LANG); } catch (e) {}
+  applyLang();
+}));
+let currentOwner = '';
+
 /* ===================== CONFIG — edit these ===================== */
 const PORTAL_PASSWORD = "canmex2026";               // shared password — CHANGE THIS
 const JSONBIN_BIN_ID = "6a7f79cbda38895dfee61223";
@@ -189,17 +279,13 @@ async function loadOwners(){
       opt.value = name; opt.textContent = name;
       ownerSelect.appendChild(opt);
     });
-    const stageSel = document.getElementById('stageFilter');
-    stageSel.innerHTML = '<option value="">All Stages</option>';
-    Object.keys(STAGE_COLORS).forEach(stage => {
-      const opt = document.createElement('option');
-      opt.value = stage; opt.textContent = stage;
-      stageSel.appendChild(opt);
-    });
+    applyLang();
   } catch (err) {
     console.error(err);
   }
 }
+
+applyLang();
 
 // Restore session
 if (sessionStorage.getItem('portalAuth') === 'true') {
@@ -212,9 +298,10 @@ if (sessionStorage.getItem('portalAuth') === 'true') {
 
 async function loadDashboard(owner){
   showScreen(dashboard);
-  document.getElementById('dashTitle').textContent = owner + "'s Prospects";
+  currentOwner = owner;
+  document.getElementById('dashTitle').textContent = t('dashTitle', { name: owner });
   const wrap = document.getElementById('tableWrap');
-  wrap.innerHTML = '<p class="loading">Loading...</p>';
+  wrap.innerHTML = '<p class="loading">' + t('loading') + '</p>';
   document.getElementById('stageFilter').value = '';
   searchQuery = '';
   document.getElementById('nameSearch').value = '';
@@ -227,23 +314,23 @@ function renderTable(records){
   const wrap = document.getElementById('tableWrap');
   if (!records.length) {
     const msg = (searchQuery || document.getElementById('stageFilter').value) && currentRecords.length
-      ? 'No prospects match your search/filter.'
-      : 'No prospects yet.';
+      ? t('noMatch')
+      : t('noneYet');
     wrap.innerHTML = `<p class="empty">${msg}</p>`;
     return;
   }
   records = records.slice().sort((a,b) => (b.lastUpdated || '').localeCompare(a.lastUpdated || ''));
-  let html = '<table><thead><tr><th>Prospect</th><th>Setter</th><th>Stage</th><th>Zoom Date</th><th>Next Step</th><th>Notes</th><th>Updated</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>' + t('colProspect') + '</th><th>' + t('colSetter') + '</th><th>' + t('colStage') + '</th><th>' + t('colZoom') + '</th><th>' + t('colNext') + '</th><th>' + t('colNotes') + '</th><th>' + t('colUpdated') + '</th></tr></thead><tbody>';
   records.forEach(r => {
     const color = STAGE_COLORS[r.stage] || '#eee';
     html += `<tr>
       <td><strong>${escapeHtml(r.prospectName || '')}</strong><br><span style="color:var(--gray); font-size:12px;">${escapeHtml(r.phone || '')}${r.email ? ' · ' + escapeHtml(r.email) : ''}</span></td>
       <td>${escapeHtml(r.setter || '—')}</td>
-      <td><span class="stage-pill" style="background:${color};">${escapeHtml(r.stage || '')}</span></td>
-      <td>${escapeHtml(r.zoomDate || '')}</td>
+      <td><span class="stage-pill" style="background:${color};">${escapeHtml(stageLabel(r.stage) || '')}</span></td>
+      <td>${escapeHtml(fmtDate(r.zoomDate))}</td>
       <td>${escapeHtml(r.nextStep || '')}</td>
       <td class="notes-cell">${escapeHtml(r.notes || '')}</td>
-      <td>${escapeHtml(r.lastUpdated || '')}</td>
+      <td>${escapeHtml(fmtDate(r.lastUpdated))}</td>
     </tr>`;
   });
   html += '</tbody></table>';
