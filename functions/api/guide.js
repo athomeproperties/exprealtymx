@@ -40,7 +40,11 @@ export async function onRequestPost({ request, env }) {
   const origin = request.headers.get('Origin') || '';
   const allowed = /^https:\/\/(www\.)?exprealtymx\.com$/.test(origin) || /^https:\/\/[a-z0-9-]+\.pages\.dev$/.test(origin);
   if (!allowed) return reply(false, 403);
-  if (!env.RESEND_API_KEY || !env.RESEND_FROM) return reply(false, 503);
+  if (!env.RESEND_API_KEY || !env.RESEND_FROM) {
+    // Diagnostic: report variable NAMES only (never values) so setup problems are visible.
+    const seen = Object.keys(env || {}).filter((k) => /resend/i.test(k)).map((k) => JSON.stringify(k));
+    return new Response(JSON.stringify({ ok: false, error: 'missing_env', hasKey: !!env.RESEND_API_KEY, hasFrom: !!env.RESEND_FROM, resendNamesSeen: seen }), { status: 503, headers: JSON_HEADERS });
+  }
 
   let b;
   try { b = await request.json(); } catch (e) { return reply(false, 400); }
