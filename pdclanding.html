@@ -325,6 +325,12 @@
     var data = {};
     new FormData(form).forEach(function(v,k){ if(k !== 'company'){ data[k] = v; } });
 
+    // also send the lead to the CRM (server-side function hides the CRM webhook URL).
+    // Fire and forget: a failure here never blocks the email or the thank-you screen.
+    try{
+      fetch('/api/lead', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data), keepalive:true}).catch(function(){});
+    }catch(e){}
+
     data._subject = 'New Google Ads lead: Playa del Carmen buyer guide';
     data._template = 'table';
     data._captcha = 'false';
